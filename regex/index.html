@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <meta name="author" content="//weibo.com/zswang" />
+    <meta name="keywords" content="javascript regex regexp debug 正则表达式 调试 工具"/>
+    <title>regex debug</title>
+    <style>
+table{
+    width: 100%;
+}
+#text_regex, #text_replace{width:100%;}
+#textarea_text{
+    width: 100%;
+    height: 150px;
+}
+.info{
+    color: Red;
+}
+.func{
+    color: #f0f;
+}
+#div_grippie{
+    background-color: #888;
+    border-color: #444;
+    border-style: solid;
+    border-width:0 1px 1px;
+    cursor: s-resize;
+    height :9px;
+}
+.zebra0{
+    background-color: Red;
+    color: Blue;
+}
+.zebra1{
+    background-color: Yellow;
+    color: Green;
+}
+#div_help{
+    font-family: SimSun, Arial;
+    font-size: 12px;
+}
+#div_help table{
+    border: #999 1px solid;
+    border-left-width: 0;
+    border-bottom-width: 0;
+    background-color: #999;
+    margin: 0.6em 0 0.3em;
+}
+#div_help th{
+    background: #ccc;
+    vertical-align: bottom;
+    border-bottom: #999 1px solid;
+    text-align: left;
+    border-left: #999 1px solid;
+    padding: 0 6px 6px 4px;
+    border-top: #999 0px solid;
+    border-right: #999 0px solid;
+}
+#div_help td{
+    background: #fff;
+    vertical-align: top;
+    border-bottom: #999 1px solid;
+    text-align: left;
+    border-left: #999 1px solid;
+    padding: 0 6px 6px 4px;
+    border-top: #999 0px solid;
+    border-right: #999 0px solid;
+}
+    </style>
+</head>
+<body>
+    <table>
+        <tr><td id="td_regex">正则表达式
+            <input type="button" value="\d" title="数字，等价于[0-9]"/>
+            <input type="button" value="\w" title="文字，等价于[A-Za-z0-9_]"/>
+            <input type="button" value="\s" title="空白，等价于[^ \f\n\r\t\v]"/>
+            <input type="button" value="\b" title="单词边界"/>
+            <input type="button" value="[a-z]" title="字母"/>
+            <input type="button" value="[\u4e00-\u9fa5]" title="汉字"/>
+            <input type="button" value="\1" title="第1组匹配"/>
+            <input type="button" value="\2" title="第2组匹配"/>
+            <input type="button" id="button_numRegex" class="func" value="整数范围" title="自动生成整数范围表达式"/>
+            <input type="button" id="button_help" class="func" value="帮助" title="显示或隐藏帮助"/>
+            <input type="button" id="button_clearRegex" class="func" value="清空" title="清空正则表达式"/>
+            <span id="span_regex_info" class="info"></span>
+        </td></tr>
+        <tr><td id="td_options">
+            <label title="忽略大小写"><input id="checkbox_ignoreCase" type="checkbox" value="i"/>忽略大小写</label>
+            <label title="全文查找出现的所有匹配"><input id="checkbox_global" type="checkbox" value="m"/>全文查找</label>
+            <label title="多行查找，能匹配每行开头^或结尾$"><input id="checkbox_multiline" type="checkbox" value="g"/>多行查找</label>
+        </td></tr>
+        <tr><td>
+            <input type="text" id="text_regex"/>
+        </td></tr>
+        <tr><td>
+            <div id="div_help" style="display:none;">
+                <table cellspacing="0">
+                    <tr>
+                        <th width="7%">字符</th>
+                        <th width="7%">输入</th>
+                        <th width="86%">描述</th>
+                    </tr>
+                    <tr>
+                        <td>\</td>
+                        <td><input type="button" value="\"/></td>
+                        <td>将下一个字符标记为一个特殊字符、或一个原义字符、或一个 向后引用、或一个八进制转义符。例如，'n' 匹配字符 "n"。'\n' 匹配一个换行符。序列 '\\' 匹配 "\" 而 "\(" 则匹配 "("。</td>
+                    </tr>
+                    <tr>
+                        <td>^</td>
+                        <td><input type="button" value="^"/></td>
+                        <td>匹配输入字符串的开始位置。如果设置了 <b>RegExp</b> 对象的 <b>Multiline</b> 属性，^ 也匹配 '\n' 或 '\r' 之后的位置。</td>
+                    </tr>
+                    <tr>
+                        <td>$</td>
+                        <td><input type="button" value="$"/></td>
+                        <td>匹配输入字符串的结束位置。如果设置了 <b>RegExp</b> 对象的 <b>Multiline</b> 属性，$ 也匹配 '\n' 或 '\r' 之前的位置。</td>
+                    </tr>
+                    <tr>
+                        <td>*</td>
+                        <td><input type="button" value="*"/></td>
+                        <td>匹配前面的子表达式零次或多次。例如，zo* 能匹配 "z" 以及 "zoo"。* 等价于{0,}。</td>
+                    </tr>
+                    <tr>
+                        <td>+</td>
+                        <td><input type="button" value="+"/></td>
+                        <td>匹配前面的子表达式一次或多次。例如，'zo+' 能匹配 "zo" 以及 "zoo"，但不能匹配 "z"。+ 等价于 {1,}。</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td><input type="button" value="?"/></td>
+                        <td>匹配前面的子表达式零次或一次。例如，"do(es)?" 可以匹配 "do" 或 "does" 中的"do" 。? 等价于 {0,1}。</td>
+                    </tr>
+                    <tr>
+                        <td>{<i>n</i>}</td>
+                        <td><input type="button" value="{2}"/></td>
+                        <td><i>n</i> 是一个非负整数。匹配确定的 <i>n</i> 次。例如，'o{2}' 不能匹配 "Bob" 中的 'o'，但是能匹配 "food" 中的两个 o。</td>
+                    </tr>
+                    <tr>
+                        <td>{<i>n</i>,}</td>
+                        <td><input type="button" value="{2,}"/></td>
+                        <td><i>n</i> 是一个非负整数。至少匹配<i>n</i> 次。例如，'o{2,}' 不能匹配 "Bob" 中的 'o'，但能匹配 "foooood" 中的所有 o。'o{1,}' 等价于 'o+'。'o{0,}' 则等价于 'o*'。</td>
+                    </tr>
+                    <tr>
+                        <td>{<i>n</i>,<i>m</i>}</td>
+                        <td><input type="button" value="{2,5}"/></td>
+                        <td><i>m</i> 和 <i>n</i> 均为非负整数，其中<i>n</i> &lt;= <i>m</i>。最少匹配 <i>n</i> 次且最多匹配 <i>m</i> 次。例如，"o{1,3}" 将匹配 "fooooood" 中的前三个 o。'o{0,1}' 等价于 'o?'。请注意在逗号和两个数之间不能有空格。</td>
+                    </tr>
+                    <tr>
+                        <td>?</td>
+                        <td><input type="button" value="?"/></td>
+                        <td>当该字符紧跟在任何一个其他限制符 (*, +, ?, {<i>n</i>}, {<i>n</i>,}, {<i>n</i>,<i>m</i>}) 后面时，匹配模式是非贪婪的。非贪婪模式尽可能少的匹配所搜索的字符串，而默认的贪婪模式则尽可能多的匹配所搜索的字符串。例如，对于字符串 "oooo"，'o+?' 将匹配单个 "o"，而 'o+' 将匹配所有 'o'。</td>
+                    </tr>
+                    <tr>
+                        <td>.</td>
+                        <td><input type="button" value="."/></td>
+                        <td>匹配除 "\n" 之外的任何单个字符。要匹配包括 '\n' 在内的任何字符，请使用象 '[.\n]' 的模式。</td>
+                    </tr>
+                    <tr>
+                        <td>(<i>pattern</i>)</td>
+                        <td><input type="button" value="()"/></td>
+                        <td>匹配 <i>pattern</i> 并获取这一匹配。所获取的匹配可以从产生的 Matches 集合得到，在VBScript 中使用 <b>SubMatches</b> 集合，在 JScript 中则使用 <b>$0</b>…<b>$9</b> 属性。要匹配圆括号字符，请使用 '\(' 或 '\)'。</td>
+                    </tr>
+                    <tr>
+                        <td>(?:<i>pattern</i>)</td>
+                        <td><input type="button" value="(?:)"/></td>
+                        <td>匹配 <i>pattern</i> 但不获取匹配结果，也就是说这是一个非获取匹配，不进行存储供以后使用。这在使用 "或" 字符 (|) 来组合一个模式的各个部分是很有用。例如， 'industr(?:y|ies) 就是一个比 'industry|industries' 更简略的表达式。</td>
+                    </tr>
+                    <tr>
+                        <td>(?=<i>pattern</i>)</td>
+                        <td><input type="button" value="(?=)"/></td>
+                        <td>正向预查，在任何匹配 <i>pattern</i> 的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如， 'Windows (?=95|98|NT|2000)' 能匹配 "Windows 2000" 中的 "Windows" ，但不能匹配 "Windows 3.1" 中的 "Windows"。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始。</td>
+                    </tr>
+                    <tr>
+                        <td>(?!<i>pattern</i>)</td>
+                        <td><input type="button" value="(?!)"/></td>
+                        <td>负向预查，在任何不匹配 <i>pattern</i> 的字符串开始处匹配查找字符串。这是一个非获取匹配，也就是说，该匹配不需要获取供以后使用。例如'Windows (?!95|98|NT|2000)' 能匹配 "Windows 3.1" 中的 "Windows"，但不能匹配 "Windows 2000" 中的 "Windows"。预查不消耗字符，也就是说，在一个匹配发生后，在最后一次匹配之后立即开始下一次匹配的搜索，而不是从包含预查的字符之后开始 </td>
+                    </tr>
+                    <tr>
+                        <td><i>x</i>|<i>y</i></td>
+                        <td><input type="button" value="x|y"/></td>
+                        <td>匹配 <i>x</i> 或 <i>y</i>。例如，'z|food' 能匹配 "z" 或 "food"。'(z|f)ood' 则匹配 "zood" 或 "food"。</td>
+                    </tr>
+                    <tr>
+                        <td>[<i>xyz</i>]</td>
+                        <td><input type="button" value="[xyz]"/></td>
+                        <td>字符集合。匹配所包含的任意一个字符。例如，'[abc]' 可以匹配 "plain" 中的 'a'。</td>
+                    </tr>
+                    <tr>
+                        <td>[^<i>xyz</i>]</td>
+                        <td><input type="button" value="[^xyz]"/></td>
+                        <td>负值字符集合。匹配未包含的任意字符。例如，'[^abc]' 可以匹配 "plain" 中的'p'。</td>
+                    </tr>
+                    <tr>
+                        <td>[<i>a-z</i>]</td>
+                        <td><input type="button" value="[a-z]"/></td>
+                        <td>字符范围。匹配指定范围内的任意字符。例如，'[a-z]' 可以匹配 'a' 到 'z' 范围内的任意小写字母字符。</td>
+                    </tr>
+                    <tr>
+                        <td>[^<i>a-z</i>]</td>
+                        <td><input type="button" value="[^a-z]"/></td>
+                        <td>负值字符范围。匹配任何不在指定范围内的任意字符。例如，'[^a-z]' 可以匹配任何不在 'a' 到 'z' 范围内的任意字符。</td>
+                    </tr>
+                    <tr>
+                        <td>\b</td>
+                        <td><input type="button" value="\b"/></td>
+                        <td>匹配一个单词边界，也就是指单词和空格间的位置。例如， 'er\b' 可以匹配 "never" 中的 'er'，但不能匹配 "verb" 中的 'er'。</td>
+                    </tr>
+                    <tr>
+                        <td>\B</td>
+                        <td><input type="button" value="\B"/></td>
+                        <td>匹配非单词边界。'er\B' 能匹配 "verb" 中的 'er'，但不能匹配 "never" 中的 'er'。</td>
+                    </tr>
+                    <tr>
+                        <td>\c<i>x</i></td>
+                        <td><input type="button" value="\cM"/></td>
+                        <td>匹配由 <i>x </i>指明的控制字符。例如， \cM 匹配一个 Control-M 或回车符。<i>x</i> 的值必须为 A-Z 或 a-z 之一。否则，将 c 视为一个原义的 'c' 字符。</td>
+                    </tr>
+                    <tr>
+                        <td>\d</td>
+                        <td><input type="button" value="\d"/></td>
+                        <td>匹配一个数字字符。等价于 [0-9]。</td>
+                    </tr>
+                    <tr>
+                        <td>\D</td>
+                        <td><input type="button" value="\D"/></td>
+                        <td>匹配一个非数字字符。等价于 [^0-9]。</td>
+                    </tr>
+                    <tr>
+                        <td>\f</td>
+                        <td><input type="button" value="\f"/></td>
+                        <td>匹配一个换页符。等价于 \x0c 和 \cL。</td>
+                    </tr>
+                    <tr>
+                        <td>\n</td>
+                        <td><input type="button" value="\n"/></td>
+                        <td>匹配一个换行符。等价于 \x0a 和 \cJ。</td>
+                    </tr>
+                    <tr>
+                        <td>\r</td>
+                        <td><input type="button" value="\r"/></td>
+                        <td>匹配一个回车符。等价于 \x0d 和 \cM。</td>
+                    </tr>
+                    <tr>
+                        <td>\s</td>
+                        <td><input type="button" value="\s"/></td>
+                        <td>匹配任何空白字符，包括空格、制表符、换页符等等。等价于 [&nbsp;\f\n\r\t\v]。</td>
+                    </tr>
+                    <tr>
+                        <td>\S</td>
+                        <td><input type="button" value="\S"/></td>
+                        <td>匹配任何非空白字符。等价于 [^&nbsp;\f\n\r\t\v]。</td>
+                    </tr>
+                    <tr>
+                        <td>\t</td>
+                        <td><input type="button" value="\t"/></td>
+                        <td>匹配一个制表符。等价于 \x09 和 \cI。</td>
+                    </tr>
+                    <tr>
+                        <td>\v</td>
+                        <td><input type="button" value="\v"/></td>
+                        <td>匹配一个垂直制表符。等价于 \x0b 和 \cK。</td>
+                    </tr>
+                    <tr>
+                        <td>\w</td>
+                        <td><input type="button" value="\w"/></td>
+                        <td>匹配包括下划线的任何单词字符。等价于 '[A-Za-z0-9_]'。</td>
+                    </tr>
+                    <tr>
+                        <td>\W</td>
+                        <td><input type="button" value="\W"/></td>
+                        <td>匹配任何非单词字符。等价于 '[^A-Za-z0-9_]'。</td>
+                    </tr>
+                    <tr>
+                        <td>\x<i>n</i></td>
+                        <td><input type="button" value="\x41"/></td>
+                        <td>匹配 <i>n</i>，其中 <i>n</i> 为十六进制转义值。十六进制转义值必须为确定的两个数字长。例如，'\x41' 匹配 "A"。'\x041' 则等价于 '\x04' &amp; "1"。正则表达式中可以使用 ASCII 编码。.</td>
+                    </tr>
+                    <tr>
+                        <td>\<i>num</i></td>
+                        <td><input type="button" value="(.)\1"/></td>
+                        <td>匹配 <i>num</i>，其中 <i>num</i> 是一个正整数。对所获取的匹配的引用。例如，'(.)\1' 匹配两个连续的相同字符。</td>
+                    </tr>
+                    <tr>
+                        <td>\u<i>n</i></td>
+                        <td><input type="button" value="\u00A9"/></td>
+                        <td>匹配 <i>n</i>，其中 <i>n</i> 是一个用四个十六进制数字表示的 Unicode 字符。例如， \u00A9 匹配版权符号 (&copy;)。</td>
+                    </tr>
+                </table>
+            </div>
+        </td></tr>
+        <tr><td id="td_replace">替换内容
+            <input type="button" value="$&" title="完整匹配"/>
+            <input type="button" value="$1" title="第1组匹配"/>
+            <input type="button" value="$2" title="第2组匹配"/>
+            <input type="button" value="$3" title="第3组匹配"/>
+            <input type="button" value="$4" title="第4组匹配"/>
+            <input type="button" value="$5" title="第5组匹配"/>
+            <input type="button" id="button_clearReplace" class="func" value="清空" title="清空替换内容"/>
+            <span id="span_replace_info" class="info"></span>
+        </td></tr>
+        <tr><td>
+            <input type="text" id="text_replace"/>
+        </td></tr>
+        <tr><td>测试文本
+            <input type="button" id="button_phone" value="手机号" title="手机号样本"/>
+            <input type="button" id="button_email" value="邮箱" title="邮箱样本"/>
+            <input type="button" id="button_html" value="HTML" title="HTML样本"/>
+            <input type="button" id="button_ip" value="IP地址" title="IP地址样本"/>
+            <input type="button" id="button_clearText" class="func" value="清空" title="清空测试文本"/>
+            <span id="span_text_info" class="info"></span>
+        </td></tr>
+        <tr><td>
+            <textarea id="textarea_text" cols="*" rows="*"></textarea>
+            <div id="div_grippie"></div>
+        </td></tr>
+        <tr><td>处理结果 (<span id="span_result">0</span>)</td></tr>
+        <tr><td>
+            <div id="div_result"></div>
+        </td></tr>
+    </table>
+
+    <script>
+void function(){
+    /*--
+    标题：正则表达式调试工具
+    设计：王集鹄
+    博客：http://blog.csdn.net/zswang
+    日期：2010年4月23日
+    --*/
+    
+    //2010年4月24日 王集鹄 修改 根据lxcnn建议优化正则表达判断 /^\/(([^\\]|\\.)+)\/([img]{0,3})$/
+    //2010年4月24日 王集鹄 添加 便捷输入、替换功能、拖拽改变高度
+    //2010年4月26日 王集鹄 添加 自动输入整数范围的表达式
+    //2010年4月27日 王集鹄 添加 测试样本、正则表达式帮助、搜索选项
+    
+    function text2Html(str) { // 过滤html字符串
+        return str.replace(/[&"<> \t\n]/g, function() {
+            return ({
+                "&": "&amp;"
+                , "\"": "&quot;"
+                , "<": "&lt;"
+                , ">": "&gt;"
+                , " ": "&nbsp;"
+                , "\n": "<br/>"
+                , "\t": new Array(5).join("&nbsp;")
+            })[arguments[0]];
+        });
+    }
+    function $(id) { return document.getElementById(id); }
+    
+    function addEventHandler(target, type, func) {
+        if (target.addEventListener)
+            target.addEventListener(type, func, false);
+        else if (target.attachEvent)
+            target.attachEvent("on" + type, func);
+        else target["on" + type] = func;
+    }
+
+    function removeEventHandler(target, type, func) {
+        if (target.removeEventListener)
+            target.removeEventListener(type, func, false);
+        else if (target.detachEvent)
+            target.detachEvent("on" + type, func);
+        else delete target["on" + type];
+    }
+
+    function setSelectText(editor, value, range) {
+        if (!editor || !value) return;
+        editor.focus();
+        if (range && range.parentElement() == editor) {
+            range.text = value;
+            range.select();
+            range = null;
+        } else if (document.selection) {
+            document.selection.createRange().text = value;
+        } else if (typeof editor.selectionStart != "undefined") {
+            var str = editor.value;
+            var start = editor.selectionStart;
+            var scroll = editor.scrollTop;
+            editor.value = str.substr(0, start) + value +
+                str.substring(editor.selectionEnd, str.length);
+            editor.selectionStart = start + value.length;
+            editor.selectionEnd = start + value.length;
+            editor.scrollTop = scroll;
+        }
+    }
+    
+    function numRegExp(max) {
+        if (!max) return "0";
+        max = "" + parseInt(max);
+        var result = [];
+        var last = "";
+        for (var i = 0; i < max.length; i++) {
+            var num = max.charAt(i);
+            if (i == max.length - 1) {
+                result.push(last + "[0-" + num + "]");
+            } else {
+                result.push("[1-9]\\d{" + i + "}");
+                if (num < 1) {
+                    last += num;
+                    continue;
+                }
+                if (last)
+                    result.push(last + "[0-" + (num - 1) + "]\\d{" + (max.length - i - 1) + "}");
+                else if (num > 1) result.push(last + "[1-" + (num - 1) + "]\\d{" + (max.length - i - 1) + "}");
+                last += num
+            }
+        }
+        if (result.length <= 1) return "" + result;
+        result = "(" + result.join("|") + ")";
+        result = result.replace(/\[0-9\]|\[1\-9\]\\d\{0\}/g, "\\d").replace(/\[(\d)-(\1)\]/g, "$1").replace(/\{1\}/g, "").replace(/\{1,1\}/g, "");
+        return result;
+    }
+    
+    (function () {
+        // 便捷输入
+        $("button_clearRegex").onclick = function () {
+            $("text_regex").value = "";
+            $("text_regex").onpropertychange();
+        };
+        $("button_clearReplace").onclick = function () {
+            $("text_replace").value = "";
+            $("text_replace").onpropertychange();
+        };
+        $("button_clearText").onclick = function () {
+            $("textarea_text").value = "";
+            $("textarea_text").onpropertychange();
+        };
+        $("button_numRegex").onclick = function () {
+            var max = prompt("输入最大值：");
+            if (!max || +max < 0) return;
+            var text = numRegExp(max);
+            if (!$("text_regex").value) text = "/^" + text + "$/gm";
+            setSelectText($("text_regex"), text);
+            $("text_regex").onpropertychange();
+        };
+        $("button_help").onclick = function () {
+            $("div_help").style.display = $("div_help").style.display ? "" : "none";
+        };
+
+        $("checkbox_ignoreCase").onclick = function () {
+            if (!!lastRegex.match(/i[^\/]*$/) ^ this.checked) {
+                if (!lastRegex) lastRegex = "//";
+                if (this.checked) {
+                    $("text_regex").value = lastRegex + "i";
+                } else {
+                    $("text_regex").value = lastRegex.replace(/i([^\/]*)$/, "$1");
+                }
+            }
+            $("text_regex").focus();
+            $("text_regex").onpropertychange();
+        };
+        $("checkbox_global").onclick = function () {
+            if (!!lastRegex.match(/g[^\/]*$/) ^ this.checked) {
+                if (!lastRegex) lastRegex = "//";
+                if (this.checked) {
+                    $("text_regex").value = lastRegex + "g";
+                } else {
+                    $("text_regex").value = lastRegex.replace(/g([^\/]*)$/, "$1");
+                }
+            }
+            $("text_regex").focus();
+            $("text_regex").onpropertychange();
+        };
+        $("checkbox_multiline").onclick = function () {
+            if (!!lastRegex.match(/m[^\/]*$/) ^ this.checked) {
+                if (!lastRegex) lastRegex = "//";
+                if (this.checked) {
+                    $("text_regex").value = lastRegex + "m";
+                } else {
+                    $("text_regex").value = lastRegex.replace(/m([^\/]*)$/, "$1");
+                }
+            }
+            $("text_regex").focus();
+            $("text_regex").onpropertychange();
+        };
+
+        var insertEditorClick = function () {
+            var text = this.value;
+            if (!$("text_regex").value) text = "/" + text + "/";
+            setSelectText($("text_regex"), text);
+            $("text_regex").onpropertychange();
+        };
+        var inputs = $("td_regex").getElementsByTagName("input");
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].type.match(/^button$/i) && !inputs[i].onclick)
+                inputs[i].onclick = insertEditorClick;
+        }
+        inputs = $("div_help").getElementsByTagName("input");
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].type.match(/^button$/i) && !inputs[i].onclick)
+                inputs[i].onclick = insertEditorClick;
+        }
+
+        inputs = $("td_replace").getElementsByTagName("input");
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].type.match(/^button$/i) && !inputs[i].onclick)
+                inputs[i].onclick = function () {
+                    var text = this.value;
+                    if (!$("text_replace").value) text = "\"" + text + "\"";
+                    setSelectText($("text_replace"), text);
+                    $("text_replace").onpropertychange();
+                };
+        }
+
+        $("button_phone").onclick = function () {
+            $("textarea_text").value = [
+                "13412345678",
+                "13512345678",
+                "13612345678",
+                "13712345678",
+                "13812345678",
+                "13912345678",
+                "15712345678",
+                "15912345678",
+                "13012345678",
+                "13112345678",
+                "13212345678",
+                "13312345678",
+                "15312345678",
+                "15612345678",
+                "18812345678",
+                "18912345678"].join("\n");
+            $("textarea_text").onpropertychange();
+        };
+        $("button_email").onclick = function () {
+            $("textarea_text").value = [
+                "regex@163_test.com",
+                "regex.test@google2.com.hk",
+                "regex@hotmail2.com",
+                "regex@gcc.cn"].join("\n");
+            $("textarea_text").onpropertychange();
+        };
+        $("button_html").onclick = function () {
+            $("textarea_text").value = [
+                "<html>",
+                "<head><title>Sample</title><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head>",
+                "<body>",
+                "	<div>",
+                "		<img src=\"http://www.baidu.com/img/baidu_logo.gif\" />",
+                "		<a href=\"http://blog.csdn.net/zswang\" target=\"_blank\">博客</a>",
+                "		<table><tr><td>1</td><td>a</td></tr>",
+                "			<tr><td>2</td><td>b</td></tr></table>",
+                "		<span style=\"background:#c1c2c3;color:Red;\">&#20013;&#22269;&#21046;&#36896</span>",
+                "		<input type=\"button\" value=\"hello\" onclick=\"alert(this.value)\"/>",
+                "	</div>",
+                "</body>",
+                "</html>"].join("\n");
+            $("textarea_text").onpropertychange();
+        };
+        $("button_ip").onclick = function () {
+            $("textarea_text").value = [
+                "192.168.0.1",
+                "192.168.0.128",
+                "127.0.0.1",
+                "61.172.209.154"].join("\n");
+            $("textarea_text").onpropertychange();
+        };
+
+        // 处理正则
+        var lastText, lastRegex, lastReplace;
+        var doChange = function () {
+            var regex;
+            if (lastRegex.match(/^\/(([^\\\/\n\r]|\\.)+)\/([img]{0,3})$/))
+                try {
+                    regex = eval("(" + lastRegex + ")");
+                } catch (ex) {
+                }
+            $("span_text_info").innerHTML = lastText ? "" : " 没有测试内容";
+            $("span_regex_info").innerHTML = regex instanceof RegExp ? "" : " 无效的表达式";
+            $("checkbox_ignoreCase").checked = lastRegex.match(/i[^\/]*$/);
+            $("checkbox_global").checked = lastRegex.match(/g[^\/]*$/);
+            $("checkbox_multiline").checked = lastRegex.match(/m[^\/]*$/);
+
+            var replace;
+            if (lastReplace.match(/^"([^\\"]|\\[\s\S])*"$/) ||
+                lastReplace.match(/^'([^\\']|\\[\s\S])*'$/))
+                try {
+                    replace = eval("(" + lastReplace + ")");
+                } catch (ex) {
+                }
+            $("span_replace_info").innerHTML = typeof replace == "string" ? "" : " 无效的替换内容";
+            if (!regex || !lastText) {
+                $("div_result").innerHTML = "";
+                $("span_result").innerHTML = 0;
+                return;
+            }
+            var count = 0;
+            var html = "";
+            if (typeof replace == "string") {
+                html = lastText.replace(regex, "\u0001" + replace + "\u0002");
+            } else {
+                html = lastText.replace(regex, function () {
+                    return "\u0001" + arguments[0] + "\u0002";
+                });
+            }
+            $("div_result").innerHTML = text2Html(html).replace(/\u0001([^\u0002]*)\u0002/g, function () {
+                return "<span class=\"zebra" + (count++ % 2) + "\">" + arguments[1] + "</span>";
+            });
+            $("span_result").innerHTML = count;
+        };
+        var changeTimer;
+        $("textarea_text").onpropertychange =
+            $("text_replace").onpropertychange =
+            $("text_regex").onpropertychange = function () {
+                changeTimer && clearTimeout(changeTimer);
+                changeTimer = setTimeout(function(){
+                    if (lastText == $("textarea_text").value && lastRegex == $("text_regex").value &&
+                        lastReplace == $("text_replace").value) return; // 测试数据未发生变化
+                    lastText = $("textarea_text").value;
+                    lastRegex = $("text_regex").value;
+                    lastReplace = $("text_replace").value;
+                    doChange();
+                    
+                    clearTimeout(changeTimer);
+                    changeTimer = 0;
+                }, 500);
+            };
+
+        if ($("text_regex").addEventListener) {
+            $("text_regex").addEventListener("keypress", $("text_regex").onpropertychange, false);
+            $("text_regex").addEventListener("keyup", $("text_regex").onpropertychange, false);
+            $("text_regex").addEventListener("input", $("text_regex").onpropertychange, false);
+        }
+        if ($("textarea_text").addEventListener) {
+            $("textarea_text").addEventListener("keypress", $("textarea_text").onpropertychange, false);
+            $("textarea_text").addEventListener("keyup", $("textarea_text").onpropertychange, false);
+            $("textarea_text").addEventListener("input", $("textarea_text").onpropertychange, false);
+        }
+        if ($("text_replace").addEventListener) {
+            $("text_replace").addEventListener("keypress", $("text_replace").onpropertychange, false);
+            $("text_replace").addEventListener("keyup", $("text_replace").onpropertychange, false);
+            $("text_replace").addEventListener("input", $("text_replace").onpropertychange, false);
+        }
+        $("text_regex").onpropertychange();
+
+        // 拖动高度相关
+        var downTop, downHeight;
+        var targetMousedown = function (e) {
+            var style = $("textarea_text").currentStyle ||
+                document.defaultView.getComputedStyle($("textarea_text"), null);
+            downTop = e.clientY;
+            downHeight = parseInt(style.height);
+            addEventHandler(document, "mousemove", documentMousemove);
+            addEventHandler(document, "mouseup", documentMouseup);
+            addEventHandler($("div_grippie"), "losecapture", documentMouseup);
+            if ($("div_grippie").setCapture) $("div_grippie").setCapture();
+            addEventHandler(window, "blur", documentMouseup);
+            if (e.preventDefault) e.preventDefault();
+        };
+        addEventHandler($("div_grippie"), "mousedown", targetMousedown);
+
+        var documentMousemove = function (e) {
+            if (window.getSelection)
+                getSelection().removeAllRanges();
+            else if (document.selection && document.selection.empty)
+                document.selection.empty();
+            var newHeight = downHeight + e.clientY - downTop;
+            if (newHeight < 20) return;
+            $("textarea_text").style.height = newHeight + "px";
+        };
+
+        var documentMouseup = function (e) {
+            removeEventHandler(document, "mousemove", documentMousemove);
+            removeEventHandler(document, "mouseup", documentMouseup);
+            removeEventHandler($("div_grippie"), "losecapture", documentMouseup);
+            if ($("div_grippie").releaseCapture) $("div_grippie").releaseCapture();
+            removeEventHandler(window, "blur", documentMouseup);
+        };
+    })();
+}();
+    </script>
+</body>
+</html>
