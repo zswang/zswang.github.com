@@ -1,157 +1,166 @@
 <html>
-	<head>
-		<title>聊天枝丫</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<link rel="stylesheet" type="text/css" href="resources/themes/default/styles/chat.css?v=11uint" />
-		<script src="http://img.baidu.com/js/tangram-1.3.9.js"></script>
-		<script src="chat.js?v=11uint"></script>
-	</head>
-	<body>
-		<div id="main">
-			<div id="messageBox">
-				<h4>消息</h4>
-				<div id="messageList">
-					<ul>
-						<script id="messageListTemplate" type="text/template">
-						<li class="!#{helper.node.getClasses()}">
-						if (this.weibo){
-							<a href="#{weibo}" target="_blank"><span class="weibo"></span></a>
-						}
-							<span class="nick" title="#{from}">#{nick}</span><span class="time">#{helper.formatTime(time)}</span><span class="letter" cmd="letter">私信</span>
-							<pre class="message"><p>!#{helper.mutiline(message)}</p></pre>
-						</li>
-						</script>
-					</ul>
-				</div>
-				<div id="editorTools" class="tools">
-					<textarea id="editor"></textarea>
-					<label><input type="checkbox" id="ctrlEnter" cmd="focus">Ctrl+Enter</label>
-					<button cmd="send">发送</button>
-				</div>
-			</div>
-			<div id="playerBox">
-				<h4>用户</h4>
-				<div id="playerList">
-					<ul>
-						<script id="playerListTemplate" type="text/template">
-						<li class="#{state} !#{helper.node.getClasses()}" down="focus">
-						if (this.weibo){
-							<span class="letter" cmd="letter">私信</span><span class="state"></span><a href="#{weibo}" target="_blank"><span class="weibo"></span></a><span class="nick" title="#{id}">#{nick}</span>
-						} else {
-							<span class="letter" cmd="letter">私信</span><span class="state"></span><span class="nick" title="#{id}">#{nick}</span>
-						}
-						</li>
-						</script>
-					</ul>
-				</div>
-				<div id="playerTools" class="tools">
-					<button cmd="nick">昵称</button>
-					<button cmd="viewLetter">私信<span id="newLetterNumber" class="number"></span></button>
-					<button cmd="weibo" title="微博"><span class="weibo"></span></button>
-				</div>
-			</div>
-		</div>
-		<div id="xgameBox">
-			<ul>
-				<script id="xgameListTemplate" type="text/template">
-				<li class="!#{helper.node.getClasses()} #{this['voted']?'voted':''}">
-					<button cmd="vote" title="投票">#{title}<span class="number">!#{count ? '(<b>' + count + '</b>)' : ''}</span></button>
-				</li>
-				</script>
-			</ul>
-		</div>
-		<div id="letterBox" class="hidden">
-			<div class="masks">
-				<div class="dialog">
-					<div class="head"><span class="title">私信</span><span class="close" cmd="cancel"></span></div>
-					<div class="content">
-						<ul>
-							<script id="letterListTemplate" type="text/template">
-							<li class="!#{helper.node.getClasses()}">
-							if (helper.node.getStatus("self")) {
-								<b>To: </b><span class="nick">#{toNick}</span>&lt;<span class="id">#{to}</span>&gt;<span class="time">#{helper.formatTime(time)}</span>
-							} else {
-								<span class="nick">#{nick}</span>&lt;<span class="id">#{from}</span>&gt;<span class="time">#{helper.formatTime(time)}</span><span class="reply" cmd="reply">回复</span>
-							}
-								<pre class="message"><p>!#{helper.mutiline(message)}</p></pre>
-							</li>
-							</script>
-						</ul>
-					</div>
-					<div class="foot">
-						<button cmd="ok">确定</button>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div>
-			<script id="dialogTemplate" type="text/template">
-			<div class="masks">
-				<div class="dialog">
-					switch(type) {
-						case "nick":						
-					<div class="head"><span class="title">修改昵称</span><span class="close" cmd="cancel"></span></div>
-					<div class="content">
-						<div class="panel">
-							<div><span>昵称：</span><input type="text" id="inputNick" value="#{nick}" maxlength="#{maxNick}"/></div>
-						</div>
-					</div>
-					<div class="foot">
-						<button cmd="cancel">取消</button><button cmd="ok">确定</button>
-					</div>
-							break;
-						case "weibo":						
-					<div class="head"><span class="title">修改微博</span><span class="close" cmd="cancel"></span></div>
-					<div class="content">
-						<div class="panel">
-							<div><span>微博：</span><input type="text" id="inputWeibo" value="#{weibo}" maxlength="#{maxWeibo}"/></div>
-						</div>
-					</div>
-					<div class="foot">
-						<button cmd="cancel">取消</button><button cmd="ok">确定</button>
-					</div>
-							break;
-						case "error":	
-					<div class="head"><span class="title">错误</span><span class="close" cmd="cancel"></span></div>
-					<div class="content">
-						<div class="panel">
-							<div><p>#{message}</p></div>
-						</div>
-					</div>
-					<div class="foot">
-						<button cmd="ok">确定</button>
-					</div>	
-							break;
-						case "passport":
-					<div class="head"><span class="title">请登记</span></div>
-					<div class="content">
-						<div class="panel">
-							<div><p><a target="_blank" href="!#{url}" cmd="close">点击登记</a></p></div>
-						</div>
-					</div>
-							break;
-						case "letter":						
-					<div class="head"><span class="title">给 #{nick} 发私信</span><span class="close" cmd="cancel"></span></div>
-					<div class="content">
-						<div class="panel">
-							<div><textarea id="inputLetter"></textarea></div>
-						</div>
-					</div>
-					<div class="foot">
-						<button cmd="cancel">取消</button><button cmd="ok">确定</button>
-					</div>
-							break;						
-					}
-				</div>
-			</div>
-			</script>
-		</div>
-		<script>
-			baidu.on(window, "load", function() {
-				AceCore.start({
-					lib: baidu
-				});
-			});
-		</script>
-	</body>
+    <head>
+        <title>聊天枝丫</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" type="text/css" href="resources/themes/default/styles/chat.css?v=19zef7" />
+        <script src="http://img.baidu.com/js/tangram-1.3.9.js"></script>
+		<script src="chat.js?v=19zef7"></script>
+    </head>
+    <body>
+        <div id="main">
+            <div id="messageBox">
+                <h4>消息</h4>
+                <div id="messageList">
+                    <ul>
+                        <script id="messageListTemplate" type="text/template">
+                        <li class="!#{helper.node.getClasses()}">
+                        if (this.weibo){
+                            <a href="#{weibo}" target="_blank"><span class="weibo"></span></a>
+                        }
+                            <span class="nick" title="#{from}">#{nick}</span><span class="time">#{helper.formatTime(time)}</span><span class="letter" cmd="letter">私信</span>
+                        switch (this.format){
+                            case 'markdown':
+                                <div>!#{helper.markdown(message)}</div>
+                                break;
+                            case 'ubb':
+                                <div>!#{helper.ubb(message)}</div>
+                                break;
+                            default:
+                                <pre class="message"><p>!#{helper.mutiline(message)}</p></pre>
+                                break;
+                        }                            
+                        </li>
+                        </script>
+                    </ul>
+                </div>
+                <div id="editorTools" class="tools">
+                    <div>
+                        <label><input type="radio" name="format" value="text" checked />Text</label>
+                        <label><input type="radio" name="format" value="ubb" />UBB</label>
+                        <label><input type="radio" name="format" value="markdown" />Markdown</label>
+                    </div>
+                    <div id="editorBox">
+                        <textarea id="editor"></textarea>
+                    </div>
+                    <label id="ctrlEnterLabel"><input type="checkbox" id="ctrlEnter" cmd="focus">Ctrl+Enter</label>
+                    <button cmd="send">发送</button>
+                </div>
+            </div>
+            <div id="playerBox">
+                <h4>用户</h4>
+                <div id="playerList">
+                    <ul>
+                        <script id="playerListTemplate" type="text/template">
+                        <li class="#{state} !#{helper.node.getClasses()}" down="focus">
+                        if (this.weibo){
+                            <span class="letter" cmd="letter">私信</span><span class="state"></span><a href="#{weibo}" target="_blank"><span class="weibo"></span></a><span class="nick" title="#{id}">#{nick}</span>
+                        } else {
+                            <span class="letter" cmd="letter">私信</span><span class="state"></span><span class="nick" title="#{id}">#{nick}</span>
+                        }
+                        </li>
+                        </script>
+                    </ul>
+                </div>
+                <div id="playerTools" class="tools">
+                    <button cmd="nick">昵称</button>
+                    <button cmd="viewLetter">私信<span id="newLetterNumber" class="number"></span></button>
+                    <button cmd="weibo" title="微博"><span class="weibo"></span></button>
+                </div>
+            </div>
+        </div>
+        <div id="voteBox">
+            <ul>
+                <script id="voteListTemplate" type="text/template">
+                <li class="!#{helper.node.getClasses()} #{this['voted']?'voted':''}">
+                    <button cmd="vote" title="投票">#{title}<span class="number">!#{count ? '(<b>' + count + '</b>)' : ''}</span></button>
+                </li>
+                </script>
+            </ul>
+        </div>
+        <div id="letterBox" class="hidden">
+            <div class="masks">
+                <div class="dialog">
+                    <div class="head"><span class="title">私信</span><span class="close" cmd="cancel"></span></div>
+                    <div class="content">
+                        <ul>
+                            <script id="letterListTemplate" type="text/template">
+                            <li class="!#{helper.node.getClasses()}">
+                            if (helper.node.getStatus("self")) {
+                                <b>To: </b><span class="nick">#{toNick}</span>&lt;<span class="id">#{to}</span>&gt;<span class="time">#{helper.formatTime(time)}</span>
+                            } else {
+                                <span class="nick">#{nick}</span>&lt;<span class="id">#{from}</span>&gt;<span class="time">#{helper.formatTime(time)}</span><span class="reply" cmd="reply">回复</span>
+                            }
+                                <pre class="message"><p>!#{helper.mutiline(message)}</p></pre>
+                            </li>
+                            </script>
+                        </ul>
+                    </div>
+                    <div class="foot">
+                        <button cmd="ok">确定</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <script id="dialogTemplate" type="text/template">
+            <div class="masks">
+                <div class="dialog">
+                    switch(type) {
+                        case "nick":                        
+                    <div class="head"><span class="title">修改昵称</span><span class="close" cmd="cancel"></span></div>
+                    <div class="content">
+                        <div class="panel">
+                            <div><span>昵称：</span><input type="text" id="inputNick" value="#{nick}" maxlength="#{maxNick}"/></div>
+                        </div>
+                    </div>
+                    <div class="foot">
+                        <button cmd="cancel">取消</button><button cmd="ok">确定</button>
+                    </div>
+                            break;
+                        case "weibo":                        
+                    <div class="head"><span class="title">修改微博</span><span class="close" cmd="cancel"></span></div>
+                    <div class="content">
+                        <div class="panel">
+                            <div><span>微博：</span><input type="text" id="inputWeibo" value="#{weibo}" maxlength="#{maxWeibo}"/></div>
+                        </div>
+                    </div>
+                    <div class="foot">
+                        <button cmd="cancel">取消</button><button cmd="ok">确定</button>
+                    </div>
+                            break;
+                        case "error":                        
+                    <div class="head"><span class="title">错误</span><span class="close" cmd="cancel"></span></div>
+                    <div class="content">
+                        <div class="panel">
+                            <div><p>#{message}</p></div>
+                        </div>
+                    </div>
+                    <div class="foot">
+                        <button cmd="ok">确定</button>
+                    </div>    
+                            break;                            
+                        case "letter":
+                    <div class="head"><span class="title">给 #{nick} 发私信</span><span class="close" cmd="cancel"></span></div>
+                    <div class="content">
+                        <div class="panel">
+                            <div><textarea id="inputLetter"></textarea></div>
+                        </div>
+                    </div>
+                    <div class="foot">
+                        <button cmd="cancel">取消</button><button cmd="ok">确定</button>
+                    </div>
+                            break;                        
+                    }
+                </div>
+            </div>
+            </script>
+        </div>
+        <script>
+            baidu.on(window, "load", function() {
+                AceCore.start({
+                    lib: baidu
+                });
+            });
+        </script>
+    </body>
 </html>
