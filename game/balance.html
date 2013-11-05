@@ -15,6 +15,8 @@
 	</style>
 </head>
 <body>
+	<textarea id="message">开始挑战吧！</textarea>
+	<hr>
 	<textarea id="editor">/*
  * 0到9号球中有一个球的质量和其他不一样，请用天平最多称量3次找到它！
  * @param{Function} weighFunc 为称量函数
@@ -28,13 +30,21 @@
 function(weighFunc) {
 	/*
 	 * TODO
+	var k1 = weighFunc([0, 1], [2, 3]); // 第一次称重
+	if (k1 == 0) { // 0,1 和 2,3 一样重
+		var k2 = weighFunc([4], [0]); // 第二次称重
+		if (k2 != 0) {
+			return 4;
+		} else {
+			var k3 = weighFunc([5], [0]); // 第三次称重
+			if (k3 != 0) {
+				return 5;
+			}
+		}
+	}
 	 */
-
 	return -1;
 }</textarea>
-	<hr>
-	<textarea id="message">
-	</textarea>
 	<script>
 void function() {
 	/**
