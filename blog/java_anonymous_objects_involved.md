@@ -16,7 +16,7 @@ new Handler(new Runnable() {
     private int mLeft;
     private int mTop;
     @Override
-    pubilc run() {
+    public run() {
         // ....
     }
     public config(int left, int top) {
