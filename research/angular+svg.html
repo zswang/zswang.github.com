@@ -1,0 +1,39 @@
+<!doctype html>
+<html ng-app>
+<head>
+	<script src="../library/angular.min.js"></script>
+</head>
+<body>
+	<div>
+		width: 
+		<select type="text" ng-model="rectWidth" ng-init="rectWidth=20">
+			<option value="20">20</option>
+			<option value="50">50</option>
+			<option value="70">70</option>
+			<option value="100">100</option>
+			<option value="150">150</option>
+		</select>
+		height:
+		<select type="text" ng-model="rectHeight" ng-init="rectHeight=20">
+			<option value="20">20</option>
+			<option value="50">50</option>
+			<option value="70">70</option>
+			<option value="100">100</option>
+			<option value="150">150</option>
+		</select>
+		color:
+		<select type="text" ng-model="rectColor" ng-init="rectColor='red'">
+			<option value="red">red</option>
+			<option value="blue">blue</option>
+			<option value="green">green</option>
+			<option value="yellow">yellow</option>
+			<option value="pink">pink</option>
+		</select>
+	</div>
+	<div>
+		<svg xmlns="http://www.w3.org/2000/svg">
+		    <rect x="10" y="10" width="{{rectWidth}}" height="{{rectHeight}}" fill="{{rectColor}}"/>
+		</svg>
+	</div>
+</body>
+</html>
