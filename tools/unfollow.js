@@ -1,14 +1,14 @@
 void function () {
 
-	/**
-	 * 专杀微博恶俗营销
-	 * 使用步骤：
-	 *	1 将本文件内容复制到剪贴板
-	 *  2 使用Chrome在网页中打开新浪微博，确定在登陆状态
-	 *  3 打开控制台（Windows:F12，Mac:alt+command+J）
-	 *  4 将剪贴板的内容粘贴到控制台输入框中，回车执行 
-	 * @author http://weibo.com/zswang
-	 */
+    /**
+     * 专杀微博恶俗营销
+     * 使用步骤：
+     *    1 将本文件内容复制到剪贴板
+     *  2 使用Chrome在网页中打开新浪微博，确定在登陆状态
+     *  3 打开控制台（Windows:F12，Mac:alt+command+J）
+     *  4 将剪贴板的内容粘贴到控制台输入框中，回车执行 
+     * @author http://weibo.com/zswang
+     */
 
     /**
      * 格式化函数
@@ -47,7 +47,7 @@ void function () {
         }
         xmlhttp.open(data != null ? "POST" : "GET", url, true);
         if (data != null) {
-        	xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // 表单方式提交
+            xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); // 表单方式提交
         }
         xmlhttp.send(data);
     }
@@ -69,51 +69,51 @@ void function () {
         text.replace(/<ul class=\\"cnfList\\"[^>]*>([\s\S]*?)<\\\/ul>/, function(all, context) {
             context.replace(/<li\s+class=\\"clearfix S_line1\\"\s+action-type=\\"itemClick\\"\s+action-data=\\"uid=(\d+)&fnick=([^&=]*)&sex=(\w+)\\"[^>]*>/g, 
                 function(all, uid, fnick, sex) {
-                	items.push({
-                		uid: uid,
-                		fnick: fnick,
-                		sex: sex
-                	});
+                    items.push({
+                        uid: uid,
+                        fnick: fnick,
+                        sex: sex
+                    });
                 }
             );
         });
         
         //items = [{ uid: "<马甲ID>", fnick: "马甲" }]; // debug
 
-		unfollow();
-	});
+        unfollow();
+    });
 
-	var msg = [];
+    var msg = [];
     var currIndex = 0;
-	var unfollowDataTemplate = "\
+    var unfollowDataTemplate = "\
 refer_sort=relationManage&\
 location=myfollow&\
 refer_flag=unfollow&\
 uid=#{uid}&\
 _t=0";
 
-	/**
-	 * 取消关注
-	 */
+    /**
+     * 取消关注
+     */
     function unfollow() {
-    	var item = items[currIndex++];
-    	if (!item) {
-    		msg.push('取消关注完成.');
-    		alert(msg.join('\n'));
-    		return;
-    	}
-    	requestHttp(
-    		format("http://weibo.com/aj/f/unfollow?_wv=5&__rnd=#{0}", [+new Date]),
-    		format(unfollowDataTemplate, item),
-    		function(err, text) {
-    			if (/\b100000\b/.test(text)) {
-    				msg.push(format('取消{fnick}关注成功.', item));
-    			} else {
-    				msg.push(format('取消{fnick}关注失败.', item));
-    			}
-    			unfollow();
-    		}
-		);
+        var item = items[currIndex++];
+        if (!item) {
+            msg.push('取消关注完成.');
+            alert(msg.join('\n'));
+            return;
+        }
+        requestHttp(
+            format("http://weibo.com/aj/f/unfollow?_wv=5&__rnd=#{0}", [+new Date]),
+            format(unfollowDataTemplate, item),
+            function(err, text) {
+                if (/\b100000\b/.test(text)) {
+                    msg.push(format('取消{fnick}关注成功.', item));
+                } else {
+                    msg.push(format('取消{fnick}关注失败.', item));
+                }
+                unfollow();
+            }
+        );
     }
 
 }();
