@@ -107,9 +107,9 @@ _t=0";
             format(unfollowDataTemplate, item),
             function(err, text) {
                 if (/\b100000\b/.test(text)) {
-                    msg.push(format('取消{fnick}关注成功.', item));
+                    msg.push(format('取消#{fnick}关注成功.', item));
                 } else {
-                    msg.push(format('取消{fnick}关注失败.', item));
+                    msg.push(format('取消#{fnick}关注失败.', item));
                 }
                 unfollow();
             }
