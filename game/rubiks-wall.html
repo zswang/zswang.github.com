@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <meta name="author" content="http//weibo.com/zswang" />
+    <title>魔方墙找茬</title>
+    <style>
+canvas {
+    padding: 0;
+    margin: 5px;
+    border: 0;
+    background: black;
+}
+#buttonAnswer {
+    color: red;
+}
+.boxWall, .boxGlass {
+    background: black;
+    text-align: center;
+}
+
+.glass {
+    position: absolute;
+    border: black solid 1px;
+}
+    </style>
+</head>
+<body>
+    <div>
+        <input type="button" id="buttonReplay" value="replay"/>
+        <select id="selectPick">
+            <option selected="selected" value="1">1</option>
+            <option value="3">3</option>
+            <option value="5">5</option>
+        </select>
+        <input type="button" id="buttonResize" value="resize"/>
+        <input type="button" id="buttonAnswer" value="answer!"/>
+    </div>
+    <div class="boxWall">
+        <canvas id="canvasWallA" width="1" height="1"></canvas>
+        <canvas id="canvasWallB" width="1" height="1"></canvas>
+    </div>
+    <div class="boxGlass">
+        <canvas id="canvasGlassA" width="1" height="1"></canvas>
+        <canvas id="canvasGlassB" width="1" height="1"></canvas>
+    </div>
+    <div id="info"></div>
+    <script>
+void function(){
+    /**
+     * @see 
+     * @author 王集鹄(wangjihu,http//weibo.com/zswang)
+     * @version 2012-00-00
+     */
+    var colCount = 50; // 列数
+    var rowCount = 50; // 行数
+    var level = 3; // 阶数
+    var colors = [
+'#FF0000', 
+'#FFFF00',
+'#FF7700',
+'#0000FF',
+'#00FF00',
+'#FFFFFF']; // 颜色
+
+    var colorCount = colors.length; // 颜色数
+    var pointsA = [];
+    var pointsB = [];
+    var blockSizeIndex = 0;
+    var glassSize = 24;
+    var blockSizes = [3, 4, 5]; // 方块尺寸
+    var blockSize = blockSizes[blockSizeIndex];
+    var pickCount = 1; // 异常点数
+    var pickPoint = []; // 异常坐标
+    
+    var canvasWallA = document.getElementById('canvasWallA');
+    var canvasWallB = document.getElementById('canvasWallB');
+    var canvasGlassA = document.getElementById('canvasGlassA');
+    var canvasGlassB = document.getElementById('canvasGlassB');
+    var info = document.getElementById('info');
+    var buttonReplay = document.getElementById('buttonReplay');
+    var buttonResize = document.getElementById('buttonResize');
+    var buttonAnswer = document.getElementById('buttonAnswer');
+    var selectPick = document.getElementById('selectPick');
+    
+    var contextWallA = canvasWallA.getContext('2d');
+    var contextWallB = canvasWallB.getContext('2d');
+    var contextGlassA = canvasGlassA.getContext('2d');
+    var contextGlassB = canvasGlassB.getContext('2d');
+
+    var hasAnswer = false;
+
+    var pointGlass;
+    resize();
+    
+
+    function pointFromIndex(index) {
+        return [
+            parseInt(index % (colCount * level)),
+            parseInt(index / (colCount * level))
+        ];
+    }
+
+    function indexFromPoint(point) {
+        return point[1] * colCount * level + point[0];
+    }
+
+    function pointFromPos(pos) {
+        if (pos[0] < 0 || pos[1] < 0) {
+            return;
+        }
+        if (pos[0] >= colCount * level * blockSize || pos[1] >= rowCount * level * blockSize) {
+            return;
+        }
+        return [parseInt(pos[0] / blockSize), parseInt(pos[1] / blockSize)];
+    }
+
+    function posFromIndex(index) {
+        var point = pointFromIndex(index);
+        return [point[0] * blockSize, point[1] * blockSize];
+    }
+    
+    function resize() {
+        canvasWallA.width = canvasWallB.width = colCount * level * blockSize;
+        canvasWallA.height = canvasWallB.height = rowCount * level * blockSize;
+        canvasGlassA.width = canvasGlassB.width = level * glassSize;
+        canvasGlassA.height = canvasGlassB.height = level * glassSize;
+        pointGlass = null;
+
+        drawWall();
+        drawGlass();
+    }
+    
+    /**
+     * 重新开始
+     */
+    function replay() {
+        pickCount = parseInt(selectPick.value);
+
+        for (var i = 0; i < colCount * rowCount * level * level; i++) {
+            pointsA[i] = parseInt(Math.random() * colorCount);
+            pointsB[i] = pointsA[i];
+        }
+
+        for (var i = 0; i < pickCount; i++) {
+            var j = parseInt(Math.random() * colCount * rowCount * level * level);
+            pickPoint[i] = j;
+            while (pointsA[j] == pointsB[j]) {
+                pointsB[j] = parseInt(Math.random() * colorCount);
+            }
+        }
+        pointGlass = null;
+        drawWall();
+    }
+    
+    function drawWall() {
+        for (var i = 0; i < colCount * rowCount * level * level; i++) {
+            var pos = posFromIndex(i);
+            contextWallA.fillStyle = colors[pointsA[i]];
+            contextWallA.fillRect(pos[0], pos[1], blockSize, blockSize);
+
+            contextWallB.fillStyle = colors[pointsB[i]];
+            contextWallB.fillRect(pos[0], pos[1], blockSize, blockSize);
+        }
+        if (hasAnswer) {
+            contextWallA.lineWidth = 2;
+            contextWallB.lineWidth = 2;
+
+            for (var i = 0; i < pickCount; i++) {
+                var pos = posFromIndex(pickPoint[i]);
+                contextWallA.strokeStyle = 'black';
+                contextWallB.strokeStyle = 'black';
+                contextWallA.strokeRect(pos[0] - blockSize, pos[1] - blockSize, blockSize * 3, blockSize * 3);
+                contextWallB.strokeRect(pos[0] - blockSize, pos[1] - blockSize, blockSize * 3, blockSize * 3);
+                contextWallA.strokeRect(pos[0] - blockSize - 4, pos[1] - blockSize - 4, blockSize * 3 + 8, blockSize * 3 + 8);
+                contextWallB.strokeRect(pos[0] - blockSize - 4, pos[1] - blockSize - 4, blockSize * 3 + 8, blockSize * 3 + 8);
+
+                contextWallA.strokeStyle = 'white';
+                contextWallB.strokeStyle = 'white';
+                contextWallA.strokeRect(pos[0] - blockSize - 2, pos[1] - blockSize - 2, blockSize * 3 + 4, blockSize * 3 + 4);
+                contextWallB.strokeRect(pos[0] - blockSize - 2, pos[1] - blockSize - 2, blockSize * 3 + 4, blockSize * 3 + 4);
+            }
+        }
+    }
+    
+    function drawGlass() {
+        if (!pointGlass) {
+            return;
+        }
+        var point = [
+            parseInt(pointGlass[0] / level) * level,
+            parseInt(pointGlass[1] / level) * level
+        ];
+
+        for (var y = 0; y < level; y++) {
+            for (var x = 0; x < level; x++) {
+                var index = indexFromPoint([point[0] + x, point[1]  + y]);
+
+                contextGlassA.fillStyle = colors[pointsA[index]];
+                contextGlassA.fillRect(x * glassSize, y * glassSize, glassSize, glassSize);
+
+                contextGlassB.fillStyle = colors[pointsB[index]];
+                contextGlassB.fillRect(x * glassSize, y * glassSize, glassSize, glassSize);
+            }
+        }
+
+    }
+    
+    replay();
+
+    function canvasWallMousemove(e) {
+        var pos = [
+            (e.layerX || e.offsetX || 0),
+            (e.layerY || e.offsetY || 0)
+        ];
+        
+        var point = pointFromPos(pos);
+        info.innerHTML = point || '';
+        pointGlass = point;
+        drawGlass();
+    }
+    canvasWallA.addEventListener('mousemove', canvasWallMousemove);
+    canvasWallB.addEventListener('mousemove', canvasWallMousemove);
+        
+    buttonReplay.addEventListener('click', function(e) {
+        replay();
+    });
+    
+    buttonResize.addEventListener('click', function(e) {
+        blockSizeIndex = (blockSizeIndex + 1) % blockSizes.length;
+        blockSize = blockSizes[blockSizeIndex];
+        resize();
+    });
+    
+    buttonAnswer.addEventListener('click', function(e) {
+        hasAnswer = !hasAnswer;
+        drawWall();
+    });
+}();
+    </script>
+</body>
+</html>
