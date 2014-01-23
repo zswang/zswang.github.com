@@ -214,8 +214,8 @@ void function(){
 
     function canvasWallMousemove(e) {
         var pos = [
-            (e.layerX || e.offsetX || 0),
-            (e.layerY || e.offsetY || 0)
+            typeof e.offsetX == 'number' ? e.offsetX : e.layerX,
+            typeof e.offsetY == 'number' ? e.offsetY : e.layerY
         ];
         
         var point = pointFromPos(pos);
@@ -225,7 +225,9 @@ void function(){
     }
     canvasWallA.addEventListener('mousemove', canvasWallMousemove);
     canvasWallB.addEventListener('mousemove', canvasWallMousemove);
-        
+    canvasWallA.addEventListener('touchmove', canvasWallMousemove);
+    canvasWallB.addEventListener('touchmove', canvasWallMousemove);
+
     buttonReplay.addEventListener('click', function(e) {
         replay();
     });
