@@ -19,7 +19,6 @@ body {
 
 .content {
 	margin: 0 auto;
-	width: 360px;
 }
 	</style>
 </head>
@@ -30,5 +29,18 @@ body {
 		</canvas>
 	</div>
 	<script src="scripts/flappy.js"></script>
+	<script>
+void function() {
+	var canvas = document.getElementById('canvas');
+	var content = canvas.parentNode;
+	function resize() {
+		canvas.style.height = window.innerHeight + 'px';
+		canvas.style.width = window.innerHeight * (canvas.width / canvas.height) + 'px';
+		content.style.width = canvas.style.width;
+	}
+	resize();
+	window.addEventListener('resize', resize);
+}();
+	</script>
 </body>
 </html>

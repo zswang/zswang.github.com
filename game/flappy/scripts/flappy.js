@@ -10,12 +10,6 @@ void function() {
 		return;
 	}
 	var context = canvas.getContext('2d');
-	function resize() {
-		canvas.style.height = window.innerHeight + 'px';
-		canvas.style.width = window.innerHeight * (canvas.width / canvas.height) + 'px';
-	}
-	resize();
-	window.addEventListener('resize', resize);
 
 	var DEBUG = false;
 	var groundInfo = {
