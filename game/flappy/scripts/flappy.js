@@ -1,11 +1,17 @@
 void function() {
+    /**
+     * 扑腾鸟
+     * @author 王集鹄(wangjihu,http//weibo.com/zswang)
+     * @version 2014年02月20日
+     */
+
 	var canvas = document.getElementById("canvas");
 	if (!canvas.getContext) { // ie6\7\8
 		return;
 	}
 	var context = canvas.getContext('2d');
 
-	var DEBUG = true;
+	var DEBUG = false;
 	var groundInfo = {
 		height: 281
 	};
@@ -144,6 +150,7 @@ void function() {
 				break;
 		}
 	}
+	canvas.addEventListener('touchdown', mousedown);
 	canvas.addEventListener('mousedown', mousedown);
 
 	document.addEventListener('keydown', function(e) {
