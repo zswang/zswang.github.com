@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+	<title>Web App - Camera</title>
+	<meta charset="utf-8" />
+</head>
+<body>
+  <div>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+  </div>
+  <script>
+void function() {
+	var canvas = document.getElementById("canvas");
+	var context = canvas.getContext("2d");
+	var video = document.getElementById("video");
+
+	navigator.getUserMedia = navigator.getUserMedia
+		|| navigator.webkitGetUserMedia
+		|| navigator.mozGetUserMedia
+		|| navigator.msGetUserMedia
+		|| navigator.oGetUserMedia;
+
+	window.URL = window.URL
+		|| window.webkitURL
+		|| window.mozURL
+		|| window.msURL
+		|| window.oURL;
+
+	if (!window.URL || !navigator.getUserMedia) {
+		return;
+	}
+
+	navigator.getUserMedia({ video: true }, function(stream) {
+		video.src = window.URL.createObjectURL(stream);
+		video.play();
+	});
+
+	video.addEventListener("click", function() {
+        context.drawImage(video, 0, 0, 640, 480);
+    });
+
+}();
+  </script>
+</body>
+</html>
