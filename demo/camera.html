@@ -11,27 +11,28 @@
   </div>
   <script>
 void function() {
-	var canvas = document.getElementById("canvas");
-	var context = canvas.getContext("2d");
-	var video = document.getElementById("video");
-
 	navigator.getUserMedia = navigator.getUserMedia
-		|| navigator.webkitGetUserMedia
-		|| navigator.mozGetUserMedia
-		|| navigator.msGetUserMedia
-		|| navigator.oGetUserMedia;
+		|| navigator.webkitGetUserMedia;
 
-	window.URL = window.URL
-		|| window.webkitURL
-		|| window.mozURL
-		|| window.msURL
-		|| window.oURL;
+	window.URL = window.URL || window.webkitURL;
 
 	if (!window.URL || !navigator.getUserMedia) {
 		return;
 	}
 
-	navigator.getUserMedia({ video: true }, function(stream) {
+	var canvas = document.getElementById("canvas");
+	var context = canvas.getContext("2d");
+	var video = document.getElementById("video");
+	var videoTrackers = [];
+	if (window.MediaStreamTrack) {
+		MediaStreamTrack.getSources(function(items) {
+			videoTrackers = items.filter(function(item) {
+				return item.kind == 'video';
+			});
+		});
+	}
+
+	navigator.getUserMedia({ video: true, optional: [] }, function(stream) {
 		video.src = window.URL.createObjectURL(stream);
 		video.play();
 	});
