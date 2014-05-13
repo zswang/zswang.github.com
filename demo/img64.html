@@ -1,5 +1,4 @@
-<script id="embed" type="text/embed">
-Content-Type: multipart/related; boundary="[MHTML_EMBED_CODE]"
+<!doctype html><script id="embed" type="text/embed">Content-Type: multipart/related; boundary="[MHTML_EMBED_CODE]"
 
 --[MHTML_EMBED_CODE]
 Content-Type: image/png
@@ -50,13 +49,6 @@ void function() {
     });
   }
 
-  var ie8before = false; // ie6、7
-  if (document.all) {
-    navigator.userAgent.replace(/MSIE (\d+).\d+/, function(all, version) {
-      ie8before = version < 8;
-    });
-  }
-
   var embeds = {};
   String(document.getElementById('embed').innerHTML)
     .replace(/Content-Type:\s*([\w\/]+)\s*Content-Location:\s*([\w\/]+)\s*Content-Transfer-Encoding:\s*([\w\/]+)\s*(^[\na-z0-9+\/\n]+$)/igm,
@@ -74,11 +66,10 @@ void function() {
     var image = images[i];
     var embed = image.getAttribute('embed');
     if (embed) {
-      if (ie8before) {
-        image.src = format('mhtml:#{0}!#{1}', [document.location.href, embed]);
-      } else { // 支持 data uri
         image.src = format('data:#{type};#{encoding},#{data}', embeds[embed]);
-      }
+        image.onerror = function() {
+          image.src = format('mhtml:#{0}!#{1}', [document.location.href, embed]);  
+        }
     }
   }
 }();
