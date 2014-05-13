@@ -1,0 +1,87 @@
+<script id="embed" type="text/embed">
+Content-Type: multipart/related; boundary="[MHTML_EMBED_CODE]"
+
+--[MHTML_EMBED_CODE]
+Content-Type: image/png
+Content-Location: img1
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD/
+//+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4U
+g9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC
+
+--[MHTML_EMBED_CODE]
+Content-Type: image/png
+Content-Location: img2
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD/
+//+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4U
+g9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC
+
+--[MHTML_EMBED_CODE]
+Content-Type: image/png
+Content-Location: img3
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEUAAAD/
+//+l2Z/dAAAAM0lEQVR4nGP4/5/h/1+G/58ZDrAz3D/McH8yw83NDDeNGe4U
+g9C9zwz3gVLMDA/A6P9/AFGGFyjOXZtQAAAAAElFTkSuQmCC
+</script>
+ 
+<html>
+<head>
+  <meta charset="utf-8" />
+</head>
+<body>
+  <img embed="img1" />
+  <img embed="img2" />
+  <img embed="img3" />
+  <script>
+void function() {
+  /**
+   * 格式化函数
+   * @param {String} template 模板
+   * @param {Object} json 数据项
+   */
+  function format(template, json){
+    return String(template).replace(/#\{(.*?)\}/g, function(all, key){
+      return json && (key in json) ? json[key] : "";
+    });
+  }
+
+  var ie8before = false; // ie6、7
+  if (document.all) {
+    navigator.userAgent.replace(/MSIE (\d+).\d+/, function(all, version) {
+      ie8before = version < 8;
+    });
+  }
+
+  var embeds = {};
+  String(document.getElementById('embed').innerHTML)
+    .replace(/Content-Type:\s*([\w\/]+)\s*Content-Location:\s*([\w\/]+)\s*Content-Transfer-Encoding:\s*([\w\/]+)\s*(^[\na-z0-9+\/\n]+$)/igm,
+    function(all, type, location, encoding, data) {
+      embeds[location] = {
+        type: type,
+        encoding: encoding,
+        data: data.replace(/\s/g, '')
+      };
+    }
+  );
+  
+  var images = document.getElementsByTagName('img');
+  for (var i = images.length - 1; i >= 0; i--) {
+    var image = images[i];
+    var embed = image.getAttribute('embed');
+    if (embed) {
+      if (ie8before) {
+        image.src = format('mhtml:#{0}!#{1}', [document.location.href, embed]);
+      } else { // 支持 data uri
+        image.src = format('data:#{type};#{encoding},#{data}', embeds[embed]);
+      }
+    }
+  }
+}();
+</script>
+</body>
+</html>
