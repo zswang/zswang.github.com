@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>示例前端模板写在代码里</title>
+</head>
+<body>
+  <div id="panel"></div>
+  <script>
+void function() {
+  function format(template, json) {
+    return template.replace(/#\{(.*?)\}/g, function(all, key) {
+      return json && (key in json) ? json[key] : "";
+    });
+  }
+
+  document.getElementById('panel').innerHTML = format(
+    String(function(){/*!
+<ul>
+	<li>#{title} -- #{date}</li>
+	<li>把模板放在注释里</li>
+	<li>这样就可以写多行了。。。</li>
+</ul>
+*/}).replace(/^[^\{]*\{\s*\/\*!?|\*\/\s*\}$/g, ''),
+    {
+      title: "代码里的模板",
+      date: "2014-05-16"
+    }
+  );
+}();
+  </script>
+  </body>
+</html>
