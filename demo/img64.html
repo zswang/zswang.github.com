@@ -1,4 +1,6 @@
-<!doctype html><script id="embed" type="text/embed">Content-Type: multipart/related; boundary="[MHTML_EMBED_CODE]"
+<!doctype html>
+<script id="embed" type="text/embed">
+Content-Type: multipart/related; boundary="[MHTML_EMBED_CODE]"
 
 --[MHTML_EMBED_CODE]
 Content-Type: image/png
@@ -67,9 +69,11 @@ void function() {
     var embed = image.getAttribute('embed');
     if (embed) {
         image.src = format('data:#{type};#{encoding},#{data}', embeds[embed]);
-        image.onerror = function() {
-          image.src = format('mhtml:#{0}!#{1}', [document.location.href, embed]);  
-        }
+        image.onerror = (function(embed) {
+          return function() {
+            image.src = format('mhtml:#{0}!#{1}', [document.location.href, embed]);
+          };
+        })(embed);
     }
   }
 }();
