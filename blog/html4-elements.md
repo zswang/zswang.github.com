@@ -70,8 +70,7 @@
 |[PRE](http://www.w3.org/TR/html4/struct/text.html#edef-PRE)| | | | | |preformatted text|
 |[Q](http://www.w3.org/TR/html4/struct/text.html#edef-Q)| | | | | |short inline quotation|
 |[S](http://www.w3.org/TR/html4/present/graphics.html#edef-S)| | | |D|L|strike-through text style|
-|[SAMP](http://www.w3.org/TR/html4/struct/text.html#edef-SAMP)| | | | | |sample program output, scripts,
-etc.|
+|[SAMP](http://www.w3.org/TR/html4/struct/text.html#edef-SAMP)| | | | | |sample program output, scripts, etc.|
 |[SCRIPT](http://www.w3.org/TR/html4/interact/scripts.html#edef-SCRIPT)| | | | | |script statements|
 |[SELECT](http://www.w3.org/TR/html4/interact/forms.html#edef-SELECT)| | | | | |option selector|
 |[SMALL](http://www.w3.org/TR/html4/present/graphics.html#edef-SMALL)| | | | | |small text style|
