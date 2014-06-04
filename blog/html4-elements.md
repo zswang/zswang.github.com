@@ -31,8 +31,7 @@
 |[DL](http://www.w3.org/TR/html4/struct/lists.html#edef-DL)| | | | | |definition list|
 |[DT](http://www.w3.org/TR/html4/struct/lists.html#edef-DT)| |O| | | |definition term|
 |[EM](http://www.w3.org/TR/html4/struct/text.html#edef-EM)| | | | | |emphasis|
-|[
-FIELDSET](http://www.w3.org/TR/html4/interact/forms.html#edef-FIELDSET)| | | | | |form control group|
+|[FIELDSET](http://www.w3.org/TR/html4/interact/forms.html#edef-FIELDSET)| | | | | |form control group|
 |[FONT](http://www.w3.org/TR/html4/present/graphics.html#edef-FONT)| | | |D|L|local change to font|
 |[FORM](http://www.w3.org/TR/html4/interact/forms.html#edef-FORM)| | | | | |interactive form|
 |[FRAME](http://www.w3.org/TR/html4/present/frames.html#edef-FRAME)| |F|E| |F|subwindow|
