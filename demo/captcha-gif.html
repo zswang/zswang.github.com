@@ -22,20 +22,21 @@ canvas {
  * 绘制旋转的文字
  * @param {CanvasRenderingContext2D} context 上下文
  * @param {String} text 文本
- * @param {Number} lineHeight 行高
  * @param {Number} x 中心坐标 x
  * @param {Number} y 中心坐标 y
  * @param {Number} angle 角度，单位弧度
  */
-function drawText(context, text, lineHeight, x, y, angle) {
+function rotateText(context, text, x, y, angle) {
   if (!context) {
     return;
   }
 
   context.save(); // 保存上次的风格设置
+  context.textAlign = 'center'; // 横向居中
+  context.textBaseline = 'middle'; // 纵向居中
   context.translate(x, y); // 修改坐标系原点
   context.rotate(angle); // 旋转
-  context.strokeText(text, 0, lineHeight / 2); // 绘制文本
+  context.strokeText(text, 0, 0); // 绘制文本
   context.restore(); // 恢复上次的风格设置
 }
 
@@ -58,7 +59,6 @@ void function() {
   var context = canvas.getContext('2d');
 
   context.font = '30px Verdana'; // 字体大小和字体名
-  context.textAlign = 'center';
 
   var lineHeight = 15; // 行高
   var backLength = 3;
@@ -88,8 +88,7 @@ void function() {
     for (var i = 0; i < backLength; i++) {
       var t = (xOffset + (tick / backSpeed) * canvas.width + 
         (canvas.width / backLength) * i) % canvas.width;
-      drawText(context, text[i],
-          15, t, y,
+      rotateText(context, text[i], t, y,
           i / backLength * Math.PI * 2 + (tick / backSpeed) * Math.PI * 2);
     }
   }
@@ -110,7 +109,7 @@ void function() {
     for (var i = 0; i < key.length; i++) {
       var tx = keyCharWidth + (((canvas.width - keyCharWidth) / key.length) * i) % canvas.width;
       var ty = Math.cos(now / 1000) * Math.PI * keyYOffsets[i];
-      drawText(context, key[i], 15, tx,
+      rotateText(context, key[i], tx,
         canvas.height / 2 - ty, Math.cos(now / 1000) * Math.PI * 0.1 + keyAOffsets[i]);
     }
   }

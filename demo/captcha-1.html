@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <style>
+canvas, img {
+  border: black 1px solid;
+}
+  </style>
+  <script src="../library/gif.js"></script>
+</head>
+<body>
+  <canvas width="200" height="200"></canvas>
+  <img width="200" height="200" /><a download="captcha.gif">download...</a>
+  <script>
+void function() {
+  var canvas = document.querySelector('canvas');
+  var context = canvas.getContext('2d');
+  var x = 100;
+  var y = 100;
+  context.font = '30px Verdana';
+  context.textAlign = 'center';
+  context.textBaseline = 'middle';
+  context.fillStyle = '#ffffff';
+
+  function render(context, progress) {
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    // 参考线
+    context.moveTo(0, y);
+    context.lineTo(canvas.width, y);
+    context.moveTo(x, 0);
+    context.lineTo(x, canvas.height);
+
+    context.stroke();
+
+    var angle = progress * 2 * Math.PI;
+    context.save();
+    context.translate(x, y);
+    context.rotate(angle);
+    context.strokeText('A', 0, 0);
+    context.restore();
+  }
+
+  var gif = new GIF({
+    repeat: 0,
+    workers: 2,
+    quality: 2,
+    workerScript: '../library/gif.worker.js'
+  });
+  for (var i = 0; i < 1; i += 1 / 10) {
+    render(context, i);
+    gif.addFrame(canvas, { delay: 100, copy: true });
+  }
+  gif.on('finished', function(blob) {
+    var url = URL.createObjectURL(blob);
+    document.querySelector('img').src = url;
+    document.querySelector('a').href = url;
+    self.disabled = false;
+  });
+  gif.render();
+
+  var start = new Date;
+  setInterval(function() {
+    render(context, (new Date - start) % 2000 / 2000);
+  }, 100);
+}();
+  </script>
+</body>
+</html>
