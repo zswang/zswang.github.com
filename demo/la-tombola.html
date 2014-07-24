@@ -1,0 +1,55 @@
+<!doctype>
+<html>
+<head>
+</head>
+<body>
+  <canvas width="200" height="70"></canvas>
+  <script>
+void function() {
+  var canvas = document.querySelector('canvas');
+  var context = canvas.getContext('2d');
+
+  var canvasMask = document.createElement('canvas'); // 蒙层
+  canvasMask.width = canvas.width;
+  canvasMask.height = canvas.height;
+  var contextMask = canvasMask.getContext('2d');
+
+  contextMask.fillStyle = 'gray';
+  contextMask.fillRect(0, 0, canvasMask.width, canvasMask.height);
+
+  var key = String(10000000 + parseInt(Math.random() * 10000000)).substr(1); // 彩票号码
+  var radius = 7;
+
+  context.font = '15px sans-serif';
+  context.textAlign = 'center'; // 文字居中
+  context.textBaseline = 'middle';
+
+  function render() { // 渲染
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.fillText(key, canvas.width / 2, canvas.height / 2, key);
+    context.drawImage(canvasMask, 0, 0);
+  }
+
+  contextMask.globalCompositeOperation = 'destination-out';
+  contextMask.fillStyle = "rgba(255, 255, 255, 0.7)";
+
+  function canvasMousemove(e) {
+    var pos = [
+      typeof e.offsetX == 'number' ? e.offsetX : e.layerX,
+      typeof e.offsetY == 'number' ? e.offsetY : e.layerY
+    ];
+    contextMask.beginPath();
+    contextMask.arc(pos[0], pos[1], radius, 0, Math.PI * 2);
+    //contextMask.rect(pos[0] - radius / 2, pos[1] - radius / 2, radius, radius);
+    contextMask.fill();
+    render();
+  }
+
+  canvas.addEventListener('touchmove', canvasMousemove);
+  canvas.addEventListener('mousemove', canvasMousemove);
+
+  render();
+}();
+  </script>
+</body>
+</html>
