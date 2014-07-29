@@ -15,7 +15,9 @@ void function() {
   var showline = false;
 
   function easeInOut(t, b, c, d) {
-    if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+    if ((t /= d / 2) < 1) {
+      return c / 2 * t * t + b;
+    }
     return -c / 2 * ((--t) * (t - 2) - 1) + b;
   }
 
@@ -46,34 +48,7 @@ void function() {
 
     var offset;
     for (var i = 0; i < 8; i++) {
-      switch (i) {
-        case 0:
-          offset = progress + (8 - 5) / 8;
-          break;
-        case 1:
-          offset = progress + (8 - 4.5) / 8;
-          break;
-        case 2:
-          offset = progress + (8 - 4) / 8;
-          break;
-        case 3:
-          offset = progress + (8 - 3.5) / 8;
-          break;
-        case 4:
-          offset = progress + (8 - 3) / 8;
-          break;
-        case 5:
-          offset = progress + (8 - 2.5) / 8;
-          break;
-        case 6:
-          offset = progress + (8 - 2) / 8;
-          break;
-        case 7:
-          offset = progress + (8 - 1.5) / 8;
-          break;
-        default:
-          offset = progress;
-      }
+      offset = progress + (16 - 10 - i) / 16;
 
       if (offset > 1) {
         offset -= 1;
