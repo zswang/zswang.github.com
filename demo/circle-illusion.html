@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+</head>
+<body>
+  <canvas width="300" height="300"></canvas>
+  <script>
+void function() {
+  var canvas = document.querySelector('canvas');
+  var context = canvas.getContext('2d');
+  var center = [canvas.width / 2, canvas.height / 2];
+  var radius = canvas.width * 0.05;
+  var size = canvas.width / 2 - radius;
+  var showline = false;
+
+  function easeInOut(t, b, c, d) {
+    if ((t /= d / 2) < 1) return c / 2 * t * t + b;
+    return -c / 2 * ((--t) * (t - 2) - 1) + b;
+  }
+
+  function render(context, progress) {
+    context.beginPath();
+    context.arc(center[0], center[1], size + radius, 0, 2 * Math.PI);
+    context.fillStyle = 'red';
+    context.fill();
+
+    var angle;
+    var x, y;
+
+    if (showline) {
+      context.beginPath();
+      for (var i = 0; i < 16; i++) {
+        angle = i / 16 * 2 * Math.PI;
+        x = center[0] + (size + radius) * Math.cos(angle);
+        y = center[1] + (size + radius) * Math.sin(angle);
+        context.moveTo(center[0], center[1]);
+        context.lineTo(x, y);
+      }
+      context.strokeStyle = 'black';
+      context.stroke();
+    }
+
+    context.beginPath();
+    context.fillStyle = 'white';
+
+    var offset;
+    for (var i = 0; i < 8; i++) {
+      switch (i) {
+        case 0:
+          offset = progress + (8 - 5) / 8;
+          break;
+        case 1:
+          offset = progress + (8 - 4.5) / 8;
+          break;
+        case 2:
+          offset = progress + (8 - 4) / 8;
+          break;
+        case 3:
+          offset = progress + (8 - 3.5) / 8;
+          break;
+        case 4:
+          offset = progress + (8 - 3) / 8;
+          break;
+        case 5:
+          offset = progress + (8 - 2.5) / 8;
+          break;
+        case 6:
+          offset = progress + (8 - 2) / 8;
+          break;
+        case 7:
+          offset = progress + (8 - 1.5) / 8;
+          break;
+        default:
+          offset = progress;
+      }
+
+      if (offset > 1) {
+        offset -= 1;
+      }
+
+      if (offset <= 0.5) {
+        offset = easeInOut(offset, -size, size * 2, 0.5);
+      } else {
+        offset = easeInOut(offset - 0.5, size, -size * 2, 0.5);
+      }
+
+      angle = i / 16 * 2 * Math.PI;
+      x = center[0] + offset * Math.cos(angle);
+      y = center[1] + offset * Math.sin(angle);
+      context.beginPath();
+      context.arc(x, y, radius, 0, 2 * Math.PI);
+      context.fill();
+    }
+  }
+
+  var start = new Date;
+  var lifetime = 8000;
+  setInterval(function() {
+    render(context, (new Date - start) % lifetime / lifetime);
+  }, 50);
+
+  canvas.addEventListener('click', function() {
+    showline = !showline;
+  });
+}();
+  </script>
+</body>
+</html>

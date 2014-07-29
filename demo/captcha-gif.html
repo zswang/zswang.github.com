@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -69,7 +68,7 @@ void function() {
   var backSpeed = 10000 + parseInt(100 * Math.random());
   var keySpeed = 12000 + parseInt(100 * Math.random());
   var key = '';
-  
+
   function init(value) {
     key = String(value).toUpperCase();
     // 随机备件
@@ -86,7 +85,7 @@ void function() {
   function renderBack(now, context, text, y, xOffset) {
     var tick = now % backSpeed;
     for (var i = 0; i < backLength; i++) {
-      var t = (xOffset + (tick / backSpeed) * canvas.width + 
+      var t = (xOffset + (tick / backSpeed) * canvas.width +
         (canvas.width / backLength) * i) % canvas.width;
       rotateText(context, text[i], t, y,
           i / backLength * Math.PI * 2 + (tick / backSpeed) * Math.PI * 2);
