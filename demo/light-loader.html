@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <style type="text/css">
+body{
+  background: #111;
+}
+  </style>
+</head>
+<body>
+  <canvas width="400" height="100"></canvas>
+  <canvas width="400" height="100"></canvas>
+</body>
+<script src="../library/jframes.min.js"></script>
+<script src="../library/light-loader.js"></script>
+<script>
+void function() {
+  var loader1 = lightLoader.create({
+    canvas: document.querySelector('canvas:nth-child(1)')
+  });
+  loader1.start();
+
+  var loader2 = lightLoader.create({
+    canvas: document.querySelector('canvas:nth-child(2)'),
+    hueStart: 100,
+    hueEnd: 360
+  });
+  loader2.start();
+
+  document.addEventListener('click', function() {
+    loader1.toggle();
+    loader2.toggle();
+  });
+}();
+</script>
+</html>
