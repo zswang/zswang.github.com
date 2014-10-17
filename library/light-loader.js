@@ -1,6 +1,10 @@
 var lightLoader = lightLoader || {};
 
 void function (exports) {
+  /**
+   * 加载进度条
+   * @see http://codepen.io/jackrugile/pen/BlDjk
+   */
 
   var rand = function(min, max) {
     return parseInt(Math.random() * (max - min + 1) + min);
@@ -27,7 +31,7 @@ void function (exports) {
     var canvas = options.canvas;
     var context = canvas.getContext('2d');
     var loaded = 10; // 是否加载完成
-    var gravity = 0.15;  // 重力加速度
+    var gravity = 0.15 * 0.06;  // 重力加速度，单位：像素/毫秒
     // 进度条速度
     var loaderSpeed = options['loaderSpeed'] || options['loader-speed'] || 0.02;
     // 进度条高宽
@@ -78,25 +82,32 @@ void function (exports) {
 
     var createParticles = function(dur) {
       var i = parseInt(particleRate * dur * 0.06 + 0.5);
+      var x = loader.x + (loaded / 100 * loaderWidth) - rand(0, 1);
+      var y = canvas.height / 2 + rand(0, loaderHeight) - loaderHeight / 2;
       while (i--) {
         particles.push({
-          x: loader.x + (loaded / 100 * loaderWidth) - rand(0, 1),
-          y: canvas.height / 2 + rand(0, loaderHeight) - loaderHeight / 2,
-          vx: (rand(0, 4) - 2) / 100 * dur * 0.06,
-          vy: (rand(0, particleLift) - particleLift * 2) / 100 * dur * 0.06,
+          b: new Date,
+          x0: x, // 初始位置
+          y0: y,
+          x: x, // 当前位置
+          y: y,
+          vx: (rand(0, 4) - 2) / 100 * 0.06, // 初速度
+          vy: (rand(0, particleLift) - particleLift * 2) / 100 * 0.06,
+          ax: ((rand(0, 6) - 3) / 100) * 0.06 / 25, // 加速度
+          ay: gravity / 15,
+          hue: hue,
           width: rand(1, 4) / 2,
           height: rand(1, 4) / 2,
-          hue: hue
         });
       }
     };
 
     var updateParticles = function(dur) {
+      var now = new Date;
       particles = particles.filter(function(particle) {
-        particle.vx += ((rand(0, 6) - 3) / 100) * dur * 0.06;
-        particle.vy += gravity * dur * 0.06;
-        particle.x += particle.vx * dur * 0.06;
-        particle.y += particle.vy * dur * 0.06;
+        var t = now - particle.b;
+        particle.x = particle.x0 + particle.vx * t + 0.5 * particle.ax * t * t;
+        particle.y = particle.y0 + particle.vy * t + 0.5 * particle.ay * t * t;
         return particle.y <= canvas.height;
       });
     };
@@ -110,6 +121,7 @@ void function (exports) {
           lightness: rand(50, 70),
           alpha: rand(20, 100) / 100
         });
+        // console.log(particle.x, particle.y, particle.width, particle.height);
         context.fillRect(particle.x, particle.y, particle.width, particle.height);
       });
       context.restore();
