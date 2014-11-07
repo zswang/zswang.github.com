@@ -1,0 +1,630 @@
+﻿<head>
+	<title>anchor editor</title>
+	<style type="text/css">  
+	html, body, div, h4{
+		margin: 0;
+		padding: 0;
+	}
+	body{
+		overflow: hidden;
+	}
+	#canvas, #board, .floor{
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		-moz-user-select: none;
+		-moz-touch-callout: none; 
+		-webkit-user-select: none;
+		-webkit-touch-callout: none; 
+	}
+	.select-box{
+		position: absolute;
+		border: dotted 1px #333;
+	}
+	.anchor{
+		position: absolute;
+		width: 14px;
+		height: 14px;
+		display: inline-block;
+		border: dotted 1px #111;
+		border-radius: 8px;
+		font-size: 1px;
+	}
+	.change{
+		position: absolute;
+		width: 10px;
+		height: 10px;
+		display: inline-block;
+		border: dotted 1px #111;
+		border-radius: 6px;
+		font-size: 1px;
+	}
+	.hint{
+		position: absolute;
+		font-size: 12px;
+	}
+	.rate{
+		background: #414;
+	}
+	.red{
+		background: red;
+	}
+	.select{
+		background: -webkit-radial-gradient(50% 50%, cover, #fff 0%, blue 100%);
+		background: -moz-radial-gradient(50% 50%, cover, #fff 0%, blue 100%);
+		background: -ms-radial-gradient(50% 50%, cover, #fff 0%, blue 100%);
+		background: -o-radial-gradient(50% 50%, cover, #fff 0%, blue 100%);
+		_background: blue;
+		border: dotted 1px blue;
+	}
+	.hover{
+		background: -webkit-radial-gradient(50% 50%, cover, #fff 0%, red 100%);
+		background: -moz-radial-gradient(50% 50%, cover, #fff 0%, red 100%);
+		background: -ms-radial-gradient(50% 50%, cover, #fff 0%, red 100%);
+		background: -o-radial-gradient(50% 50%, cover, #fff 0%, red 100%);
+		_background: red;
+		border: dotted 1px red;
+	}
+	#tools{
+		position: absolute;
+		top: 5px;
+		right: 5px;
+	}
+	#pointsEditor{
+		height: 300px;
+	}
+	#changesEditor, #pathsEditor{
+		height: 120px;
+	}
+	#pathVML{
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+	}
+	#canvas *{
+		behavior:url(#default#VML);
+	}
+	</style>
+</head>
+<body>
+	<div class="floor" id="changesFloor"></div>
+	<div class="floor" id="pointsFloor"></div>
+	<div id="canvas">
+		<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" version="1.1">
+			<path id="pathSVG" fill="none" stroke="black" stroke-width="1" />
+		</svg>
+	</div>
+	<script id="vml" type="text/vml">
+		<v:shape id="pathVML" filled=false coordsize="1,1" style="width:1px;height:1px;"/>
+	</script>
+	<div id="board"></div>
+	<div id="tools">
+		<div>
+			<h4>point: p1=x1,y1</h4>
+			<textarea id="pointsEditor"></textarea>
+		</div>
+		<div>
+			<h4>change: c1=p1,p2...</h4>
+			<h4>rate: r1=p1,p2...</h4>
+			<div><select id="rateSelect"><option value="0">0%</option><option value="1">1%</option><option value="2">2%</option><option value="3">3%</option><option value="4">4%</option><option value="5">5%</option><option value="6">6%</option><option value="7">7%</option><option value="8">8%</option><option value="9">9%</option><option value="10">10%</option><option value="11">11%</option><option value="12">12%</option><option value="13">13%</option><option value="14">14%</option><option value="15">15%</option><option value="16">16%</option><option value="17">17%</option><option value="18">18%</option><option value="19">19%</option><option value="20">20%</option><option value="21">21%</option><option value="22">22%</option><option value="23">23%</option><option value="24">24%</option><option value="25">25%</option><option value="26">26%</option><option value="27">27%</option><option value="28">28%</option><option value="29">29%</option><option value="30">30%</option><option value="31">31%</option><option value="32">32%</option><option value="33">33%</option><option value="34">34%</option><option value="35">35%</option><option value="36">36%</option><option value="37">37%</option><option value="38">38%</option><option value="39">39%</option><option value="40">40%</option><option value="41">41%</option><option value="42">42%</option><option value="43">43%</option><option value="44">44%</option><option value="45">45%</option><option value="46">46%</option><option value="47">47%</option><option value="48">48%</option><option value="49">49%</option><option value="50">50%</option><option value="51">51%</option><option value="52">52%</option><option value="53">53%</option><option value="54">54%</option><option value="55">55%</option><option value="56">56%</option><option value="57">57%</option><option value="58">58%</option><option value="59">59%</option><option value="60">60%</option><option value="61">61%</option><option value="62">62%</option><option value="63">63%</option><option value="64">64%</option><option value="65">65%</option><option value="66">66%</option><option value="67">67%</option><option value="68">68%</option><option value="69">69%</option><option value="70">70%</option><option value="71">71%</option><option value="72">72%</option><option value="73">73%</option><option value="74">74%</option><option value="75">75%</option><option value="76">76%</option><option value="77">77%</option><option value="78">78%</option><option value="79">79%</option><option value="80">80%</option><option value="81">81%</option><option value="82">82%</option><option value="83">83%</option><option value="84">84%</option><option value="85">85%</option><option value="86">86%</option><option value="87">87%</option><option value="88">88%</option><option value="89">89%</option><option value="90">90%</option><option value="91">91%</option><option value="92">92%</option><option value="93">93%</option><option value="94">94%</option><option value="95">95%</option><option value="96">96%</option><option value="97">97%</option><option value="98">98%</option><option value="99">99%</option><option value="100">100%</option></select></div>
+			<textarea id="changesEditor"></textarea>
+		</div>
+		<div>
+			<h4>path: M p1 L p2</h4>
+			<h4>path: M p1 C p2 p3 p4</h4>
+			<textarea id="pathsEditor"></textarea>
+		</div>
+	</div>
+	<script>
+		void function (){
+			var w = window, d = document, b = d.body,
+				math = Math,
+				PI = math.PI, PI2 = PI * 2,
+				pow = math.pow,
+				cos = math.cos,
+				sqrt = math.sqrt,
+				sin = math.sin,
+				random = math.random,
+				vml = /*@cc_on!@*/false && !d.addEventListener,
+				canvas = d.getElementById('canvas'),
+				board = d.getElementById('board'),
+				pointsFloor = d.getElementById('pointsFloor'),
+				changesFloor = d.getElementById('changesFloor'),
+				path = d.getElementById('pathSVG'),
+				pathsEditor = d.getElementById('pathsEditor'),
+				pointsEditor = d.getElementById('pointsEditor'),
+				changesEditor = d.getElementById('changesEditor'),
+				rateSelect = d.getElementById('rateSelect'),
+				r = 50;
+			var oldHash = '';
+			function hash2editor(){
+				if (oldHash == location.hash) return;
+				pointsEditor.value = '';
+				changesEditor.value = '';
+				rateSelect.value = '50';
+				pathsEditor.value = '';
+				location.hash.replace(/(?:^|&|#)point=([^&]*)/, function(all, value){
+					pointsEditor.value = decodeURIComponent(value);
+				}).replace(/(?:^|&|#)change=([^&]*)/, function(all, value){
+					changesEditor.value = decodeURIComponent(value);
+				}).replace(/(?:^|&|#)path=([^&]*)/, function(all, value){
+					pathsEditor.value = decodeURIComponent(value);
+				}).replace(/(?:^|&|#)rate=([^&]*)/, function(all, value){
+					rateSelect.value = decodeURIComponent(value);
+					r = +rateSelect.value;
+				});
+				oldHash = location.hash;
+			}
+			function editor2hash(real){
+				if (!real) return; // 禁用
+				
+				var result = [];
+				if (pointsEditor.value){
+					result.push('point=' + encodeURIComponent(pointsEditor.value));
+				}
+				if (changesEditor.value){
+					result.push('change=' + encodeURIComponent(changesEditor.value));
+				}
+				if (pathsEditor.value){
+					result.push('path=' + encodeURIComponent(pathsEditor.value));
+				}
+				if (rateSelect.value){
+					result.push('rate=' + encodeURIComponent(rateSelect.value));
+				}
+				oldHash = '#' + result.join('&');
+				location.hash = oldHash;
+			}
+			if (location.hash){
+				hash2editor();
+			} else{
+				rateSelect.value = r;
+			}
+			on(window, 'hashchange', function(){
+				hash2editor();
+				editor2changes(true);
+				editor2points(true);
+				editor2paths(true);
+			});
+			on(rateSelect, 'change', function(){
+				r = +this.value;
+				editor2hash();
+			});
+			/**
+			 * 计算点到点之间的距离
+			 * @param {Array[Number,Number]} a 坐标1
+			 * @param {Array[Number,Number]} b 坐标2
+			 * @return {Number} 返回点与点间的距离
+			 */ 
+			function pointToPoint(a, b){
+				return sqrt(pow(a[0] - b[0], 2) + pow(a[1] - b[1], 2));
+			}
+
+			/*
+			 * 贝赛尔曲线
+			 * @param{Array[Array[Number, Number],...]} curve 曲线每个参考点
+			 * @param{Number} rate 比率
+			 */
+			function bezier(curve, rate){
+				if (!curve || !curve.length) return [];
+				if (curve.length == 1) return [curve[0][0], curve[0][1]];
+				if (curve.length == 2) return [
+					curve[0][0] + (curve[1][0] - curve[0][0]) * rate,
+					curve[0][1] + (curve[1][1] - curve[0][1]) * rate
+				];
+				var temp = [];
+				for (var i = 1; i < curve.length; i++){
+					temp.push(bezier([curve[i - 1], curve[i]], rate));
+				}
+				return bezier(temp, rate);
+			}
+
+			function on(element, event, callback){
+				if (element.addEventListener)
+					return element.addEventListener(event, callback, false);
+				if (element.attachEvent)
+					return element.attachEvent('on' + event, callback);
+			}
+			
+			var anchors = {};
+			var paths = {};
+			var changes = {};
+			var guid = 1;
+			var anchorSize = 8;
+			var changeSize = 6;
+			var t = 0.5;
+			function forEach(json, callback){
+				if (!callback) return;
+				for (var p in json){
+					if (callback(json[p], p) === false) return false;
+				}
+			}
+			
+			function appendAnchor(pos, id){
+				if (!id) {
+					while (anchors[guid]){
+						guid++;
+					}
+					id = guid;
+				}
+				var element = d.createElement('span');
+				element.className = 'anchor';
+				element.style.left = pos[0] - anchorSize + 'px';
+				element.style.top = pos[1] - anchorSize + 'px';
+				pointsFloor.appendChild(element);
+				
+				var hintElement = d.createElement('span');
+				hintElement.className = 'hint';
+				hintElement.innerHTML = 'p' + id;
+				hintElement.style.left = pos[0] + 'px';
+				hintElement.style.top = pos[1] - anchorSize - 14 + 'px';
+				pointsFloor.appendChild(hintElement);
+				return anchors[id] = {
+					id: id,
+					pos: pos,
+					element: element,
+					hintElement: hintElement
+				};
+			}
+			
+			function points2Editor(){
+				if (document.activeElement == pointsEditor) return;
+				var points = [];
+				for (var id in anchors){
+					var anchor = anchors[id];
+					points.push(['p' + anchor.id, anchor.pos].join('='));
+				}
+				pointsEditor.value = points.join('\n');
+			}
+			function removeAnchor(id){
+				if (down = id) down = false;
+				if (hover = id) hover = false;
+				var anchor = anchors[id];
+				if (!anchor) return;
+				guid = 1;
+				pointsFloor.removeChild(anchor.element);
+				pointsFloor.removeChild(anchor.hintElement);
+				delete anchors[id];
+			}
+			function deleteSelect(){
+				forEach(anchors, function(item){
+					if (item.select) removeAnchor(item.id);
+				});
+				points2Editor();
+				editor2hash();
+			}
+			function offsetSelect(offset){
+				var exists = false;
+				forEach(anchors, function(item){
+					if (item.select){
+						moveAnchor(item, [
+							item.pos[0] + offset[0], item.pos[1] + offset[1]
+						]);
+						exists = true;
+					}
+					if (exists){
+						points2Editor();
+						editor2paths();
+						editor2hash();
+					}
+				});
+			}
+			function removeAll(){
+				down = false;
+				hover = false;
+				anchors = {};
+				guid = 1;
+				pointsFloor.innerHTML = '';
+			}
+			function removeChanges(){
+				changes = {};
+				changesFloor.innerHTML = '';
+			}
+			function realPoints(points){
+				var result = [];
+				points.toLowerCase().replace(/([pcr])(\d+)/ig, function(all, flag, id){
+					switch(flag){
+						case 'p':
+							var anchor = anchors[id];
+							result.push(anchor ? [anchor.pos[0], anchor.pos[1]] : [0, 0]);
+							break;
+						case 'c':
+						case 'r':
+							var change = changes[flag + id];
+							result.push(change ? [change.pos[0], change.pos[1]] : [0, 0]);
+							break;
+					}
+				});
+				return result;
+			}
+			function appendChange(points, id){
+				if (changes[id]) return;
+				points = points.toLowerCase();
+				var element = d.createElement('span');
+				element.className = 'change ' + (/r/i.test(id) ? 'rate' : 'red');
+				var pos = bezier(realPoints(points), /r/i.test(id) ? (r / 100) : t);
+				element.style.left = pos[0] - changeSize + 'px';
+				element.style.top = pos[1] - changeSize + 'px';
+				changesFloor.appendChild(element);
+				
+				var hintElement = d.createElement('span');
+				hintElement.className = 'hint';
+				hintElement.innerHTML = id;
+				hintElement.style.left = pos[0] + 'px';
+				hintElement.style.top = pos[1] - changeSize - 14 + 'px';
+				changesFloor.appendChild(hintElement);
+				return changes[id] = {
+					id: id,
+					pos: pos,
+					points: points,
+					element: element,
+					hintElement: hintElement
+				};
+			}
+			function updateChanges(){
+				forEach(changes, function(item){
+					var pos = bezier(realPoints(item.points), /r/i.test(item.id) ? (r / 100) : t);
+					item.pos = pos;
+					item.element.style.left = pos[0] - changeSize + 'px';
+					item.element.style.top = pos[1] - changeSize + 'px';
+					item.hintElement.style.left = pos[0] + 'px';
+					item.hintElement.style.top = pos[1] - changeSize - 14 + 'px';
+				});
+			}
+			var hover, down, downPos;
+			function changeClass(anchor){
+				if (!anchor) return;
+				var className = 'anchor';
+				if (anchor.hover) className += ' hover';
+				if (anchor.select) className += ' select';
+				anchor.element.className = className;
+			}
+
+			function setHover(value){
+				if (hover == value) return;
+				var newHover = anchors[value];
+				var oldHover = anchors[hover];
+ 				hover = value;
+				if (oldHover){
+					oldHover.hover = false;
+					changeClass(oldHover);
+				}
+				if (newHover){
+					newHover.hover = true;
+					changeClass(newHover);
+				};
+			}
+			
+			function setDown(value, shift){
+				if (down == value) return;
+				var newDown = anchors[value];
+				var oldDown = anchors[down];
+				down = value;
+				if (shift){
+					if (newDown){
+						newDown.select = !newDown.select;
+						changeClass(newDown);
+					}
+				} else {
+					if (newDown && newDown.select) return;
+					forEach(anchors, function(item){
+						if (item.select){
+							item.select = false;
+							changeClass(item);
+						}
+					});
+					if (newDown){
+						newDown.select = true;
+						changeClass(newDown);
+					}
+				}
+			}
+			
+			function hoveFromPoint(pos){
+				var minSpace = 10, minAnchor;
+				for (var id in anchors){
+					var t = pointToPoint(pos, anchors[id].pos);
+					if (minSpace > t){
+						minSpace = t;
+						minAnchor = id;
+					}
+				}
+				if (minSpace <= 7){
+					return minAnchor;
+				}
+			}
+
+			function moveAnchor(anchor, pos){
+				anchor.pos = pos;
+				anchor.element.style.left = pos[0] - anchorSize + 'px';
+				anchor.element.style.top = pos[1] - anchorSize + 'px';
+				anchor.hintElement.style.left = pos[0] + 'px';
+				anchor.hintElement.style.top = pos[1] - anchorSize - 14 + 'px';
+			}
+
+			/**
+			 * 获取鼠标按键
+			 * 左键1 中间2 右键3
+			 */
+			function getMouseButton(e){
+				return e.which || e.button && 
+					(e.button & 1 ? 1 : (e.button & 2 ? 3 : (e.button & 4 ? 2 : 0)));
+			}
+
+			function relPos(element, pos){
+				var box = element.getBoundingClientRect();
+				return [
+					pos[0] - box.left,
+					pos[1] - box.top
+				];
+			}
+
+			on(d, 'mousemove', function(e){
+				var target = e.target || e.srcElement;
+				if (/^(select|input|textarea)$/i.test(target.tagName)) return;
+				var pos = relPos(target, [e.clientX, e.clientY]);
+				if (down){
+					var offset = [pos[0] - downPos[0], pos[1] - downPos[1]];
+					forEach(anchors, function(item){
+						item.select &&
+							moveAnchor(item, [item.pos[0] + offset[0], item.pos[1] + offset[1]]);
+					});
+					downPos = pos;
+					points2Editor();
+					editor2paths();
+					editor2hash();
+				} else {
+					setHover(hoveFromPoint(pos));
+				}
+			});
+			
+			on(d, 'mouseup', function(e){
+				downPos = down = 0;
+			});
+			on(w, 'blur', function(e){
+				downPos = down = 0;
+			});
+			on(board, 'losecapture', function(e){
+				downPos = down = 0;
+			});
+
+			on(d, 'mousedown', function(e){
+				var target = e.target || e.srcElement;
+				if (/^(select|input|textarea|a|h4|option)$/i.test(target.tagName)) return;
+				var pos = relPos(target, [e.clientX, e.clientY]);
+				switch(getMouseButton(e)){
+					case 1:
+						downPos = pos;
+						var id = hoveFromPoint(downPos);
+						if (id){
+							setDown(id, e.shiftKey);
+						} else{
+							var anchor = appendAnchor(downPos);
+							setHover(anchor.id);
+							setDown(anchor.id);
+							points2Editor();
+							editor2hash();
+						}
+						break;
+				}
+				/*
+				e.stopPropagation && e.stopPropagation();
+				e.preventDefault && e.preventDefault();
+				e.returnValue = false;
+				*/
+			});
+			/*on(d, 'contextmenu', function(e){
+				var target = e.target || e.srcElement;
+				if (/^(select|input|textarea|a|h4|option)$/i.test(target.tagName)) return;
+				e.stopPropagation && e.stopPropagation();
+				e.preventDefault && e.preventDefault();
+				e.returnValue = false;
+			});*/
+			var lastPointsText;
+			function editor2points(tick){
+				if (!tick && d.activeElement != null &&
+					d.activeElement != b &&
+					d.activeElement != pointsEditor) return;
+				if (!tick && lastPointsText == pointsEditor.value) return;
+				removeAll();
+				lastPointsText = pointsEditor.value;
+				lastPointsText.replace(/^p(\d+)\s*=\s*([-+]?\d+)\s*,\s*([-+]?\d+)$/img, function(all, id, x, y){
+					!anchors[id] && appendAnchor([+x, +y], id);
+				});
+			}
+
+			var lastChangesText;
+			function editor2changes(tick){
+				if (!tick && d.activeElement != null &&
+					d.activeElement != b &&
+					d.activeElement != changesEditor) return;
+				if (!tick && lastChangesText == changesEditor.value) return;
+				removeChanges();
+				lastChangesText = changesEditor.value;
+				lastChangesText.replace(/^([cr]\d+)\s*=(\s*[pcr]\d+(\s*,\s*[pcr]\d+)+)\s*$/img, function(all, id, points){
+					id = id.toLowerCase();
+					if (!changes[id]){
+						appendChange(points, id);
+					}
+				});
+				editor2hash();
+			}
+
+			var lastPathsText;
+			function editor2paths(tick){
+				if (!tick && lastPathsText == pathsEditor.value &&
+					lastPointsText == pointsEditor.value) return;
+				
+				updateChanges();
+				editor2hash();
+				lastPathsText = pathsEditor.value;
+				if (vml){
+					// TODO : path2vml();
+					path.setAttribute('path',
+						lastPathsText.replace(/\bp(\d+)/gi, function(all, id){
+							var anchor = anchors[id];
+							return anchor ? anchor.pos : '';
+						}).replace(/\b([cr]\d+)/gi, function(all, id){
+							var change = changes[id.toLowerCase()];
+							return change ? change.pos : '';
+						}).replace(/\d+\.\d+/g, function(all){
+							return ~~all; // vml 不能有小数
+						})
+					);
+				}else{
+					path.setAttribute('d',
+						lastPathsText.replace(/\bp(\d+)/gi, function(all, id){
+							var anchor = anchors[id];
+							return anchor ? anchor.pos : '';
+						}).replace(/\b([cr]\d+)/gi, function(all, id){
+							var change = changes[id.toLowerCase()];
+							return change ? change.pos : '';
+						})
+					);
+				}
+			}
+			if (vml){
+				canvas.innerHTML = d.getElementById('vml').innerHTML;
+				path = d.getElementById('pathVML');
+				
+			}
+			var offsets = [[-1, 0], [0, -1], [+1, 0], [0, +1]];
+			on(d, 'keydown', function(e){
+				if (/^(select|input|textarea|a|h4)$/i.test(
+					d.activeElement && d.activeElement.tagName
+				)) return;
+				var code = e.keyCode || e.which || e.charCode;
+				switch (code){
+					case 37: case 38: case 39: case 40:
+						offsetSelect(offsets[code - 37]);
+						break;
+					case 46:
+						deleteSelect();
+						break;
+					case 13:
+						editor2hash(true);
+						console.log(1);
+						break;
+				}
+			});
+			on(pointsEditor, 'input', editor2points);
+			on(pointsEditor, 'propertychange', editor2points);
+			on(pathsEditor, 'input', editor2paths);
+			on(pathsEditor, 'propertychange', editor2paths);
+			on(changesEditor, 'input', editor2changes);
+			on(changesEditor, 'propertychange', editor2changes);
+			editor2points();
+			editor2changes();
+			editor2paths();
+			var i = 50;
+			var count = 100;
+			var timer = setInterval(function(){
+				if (changes.length <= 0) return;
+				i = (i + 1) % count;
+				t = i / count;
+				editor2paths(true);
+			}, 50);
+		}();
+	</script>
+</body>
