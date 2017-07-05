@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <meta name="author" content="http//weibo.com/zswang" />
+    <title>YAML</title>
+    <script src="../qrcode/jquery.min.js"></script>
+    <script src="../library/js-yaml.min.js"></script>
+    <style>
+#yaml {
+    width: 400px;
+    height: 200px;
+}
+#json {
+    width: 400px;
+    height: 200px;
+}
+.error {
+    background: rgba(230, 193, 193, 0.3);
+}
+    </style>
+</head>
+<body>
+    <textarea id="yaml"></textarea>
+    <textarea id="json"></textarea>
+    <script>
+$(function() {
+    $('#yaml').bind('input', function () {
+        $('#json').removeClass('error');
+        try {
+            $('#json').val(
+                JSON.stringify(jsyaml.safeLoad($('#yaml').val()), null, '  ')
+            );
+            $('#yaml').removeClass('error');
+        } catch(ex) {
+            $('#yaml').addClass('error');
+        }
+    });
+    $('#json').bind('input', function () {
+        $('#yaml').removeClass('error');
+        try {
+            $('#yaml').val(
+                jsyaml.safeDump(JSON.parse($('#json').val()))
+            );
+            $('#json').removeClass('error');
+        } catch(ex) {
+            $('#json').addClass('error');
+        }
+    });
+});
+    </script>
+</body>
+</html>
