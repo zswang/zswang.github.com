@@ -18,9 +18,13 @@
 .error {
     background: rgba(230, 193, 193, 0.3);
 }
+div.error {
+    color: red;
+}
     </style>
 </head>
 <body>
+    <div class="error"></div>
     <textarea id="yaml" placeholder="YAML"></textarea>
     <textarea id="json" placeholder="JSON"></textarea>
     <script>
@@ -32,7 +36,9 @@ $(function() {
                 JSON.stringify(jsyaml.safeLoad($('#yaml').val()), null, '  ')
             );
             $('#yaml').removeClass('error');
+            $('div.error').text('');
         } catch(ex) {
+            $('div.error').text(ex.message);
             $('#yaml').addClass('error');
         }
     });
@@ -43,7 +49,9 @@ $(function() {
                 jsyaml.safeDump(JSON.parse($('#json').val()))
             );
             $('#json').removeClass('error');
+            $('div.error').text('');
         } catch(ex) {
+            $('div.error').text(ex.message);
             $('#json').addClass('error');
         }
     });
