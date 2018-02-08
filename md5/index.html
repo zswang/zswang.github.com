@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8 />
+    <meta name="author" content="http//weibo.com/zswang" />
+    <title>MD5</title>
+    <script src="../qrcode/jquery.min.js"></script>
+    <script src="../library/jmd5s.min.js"></script>
+    <style>
+#text {
+    width: 400px;
+    height: 200px;
+}
+#md5 {
+    width: 400px;
+    height: 200px;
+}
+    </style>
+</head>
+<body>
+    <textarea id="text" placeholder="TEXT"></textarea>
+    <textarea id="md5" placeholder="md5" readonly></textarea>
+    <script>
+$(function() {
+    $('#text').bind('input', function () {
+        $('#md5').val(jmd5s.encode($(this).val()));
+    });
+});
+    </script>
+</body>
+</html>
